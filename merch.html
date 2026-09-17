@@ -28,9 +28,9 @@
 <style>
 :root{
   color-scheme:only light;
-  --nest:#1F3A2E; --deep:#152A21; --ivory:#F3EDE3; --paper:#FAF6EE;
+  --nest:#0C4831; --deep:#083222; --ivory:#F3EDE3; --paper:#FAF6EE;
   --espresso:#462D1D; --gold:#EFAE1E; --terra:#C55B3D; --terra-t:#AD5035;
-  --sage:#8EA88A; --teal:#214F54; --taupe:#8F7864; --stone:#C8B6A7;
+  --sage:#98B095; --teal:#214F54; --taupe:#8F7864; --stone:#C8B6A7;
   --ink:#2E2118; --ink-s:#6B5B4C; --ink-f:#75695E;
   --rule:#DED3C4; --rule-s:#EAE1D4;
   --d:'Archivo',system-ui,-apple-system,sans-serif;
@@ -325,6 +325,15 @@ footer a{color:var(--gold)}
   <a href="#order">Review order</a>
 </div>
 
+<!-- Netlify detects this hidden form at deploy time. Do not delete it. -->
+<form name="merch-preorder" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name"><input type="tel" name="phone">
+  <input type="text" name="flock"><input type="text" name="mpesa_code">
+  <input type="text" name="items"><input type="text" name="total">
+  <input type="text" name="deposit"><textarea name="order"></textarea>
+  <input type="text" name="bot-field">
+</form>
+
 <footer>
   <div class="wrap">
     <span>Flocking Birds Book Club · Nairobi</span>
@@ -349,7 +358,7 @@ const CONFIG = {
 };
 
 const COLOURS = {
-  forest : '#1F3A2E',
+  forest : '#0C4831',
   navy   : '#1F2E45',
   cream  : '#EFE6D6',
   black  : '#211E1B',
@@ -575,13 +584,32 @@ function summary(){
     + '\nM-Pesa code: ' + code;
 }
 
+function record(){
+  // A structured row per order, so the size tally for the printer is one CSV
+  // export rather than sixty WhatsApp messages read by hand.
+  const { count, total, dep } = totals();
+  try {
+    fetch('/', { method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        'form-name':'merch-preorder',
+        name: $('#o-name').value.trim(), phone: $('#o-phone').value.trim(),
+        flock: $('#o-flock').value, mpesa_code: $('#o-code').value.trim(),
+        items: String(count), total: String(total), deposit: String(dep),
+        order: order.map(l => l.qty + ' x ' + l.name + ' (' + l.variant + ')').join(' | ')
+      }).toString() }).catch(() => {});
+  } catch(e) {}
+}
+
 $('#send').addEventListener('click', () => {
+  record();
   window.open('https://wa.me/' + CONFIG.whatsapp + '?text='
     + encodeURIComponent(summary()), '_blank', 'noopener');
 });
 
 $('#copy').addEventListener('click', async () => {
   const btn = $('#copy');
+  record();
   try {
     await navigator.clipboard.writeText(summary());
     btn.textContent = 'Copied. Paste it to us on WhatsApp.';
