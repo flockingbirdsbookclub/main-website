@@ -49,13 +49,13 @@ Use the CSS custom properties. Never hardcode a hex that is not in this table.
 
 | Token | Hex | Use |
 |---|---|---|
-| `--terracotta-text` | `#AD5035` | Terracotta darkened so small text passes contrast |
+| `--terracotta-text` | `#9D482D` | Terracotta darkened so small text passes contrast, including over the ivory texture |
 | `--sage` | `#98B095` | Muted green. Small text on the dark green, dots, fills |
 | `--teal` | `#214F54` | Deep teal. From the logo. Links, secondary surfaces |
 | `--taupe` | `#8F7864` | From the logo. Paper, kraft, packaging |
 | `--ink` | `#2E2118` | Body text on light grounds |
 | `--ink-soft` | `#6B5B4C` | Secondary text |
-| `--ink-faint` | `#75695E` | Captions. The lightest ink that still passes AA |
+| `--ink-faint` | `#695E55` | Captions. The lightest ink that still passes AA, including over the ivory texture |
 | `--rule` | `#DED3C4` | Dividers |
 | `--rule-soft` | `#EAE1D4` | Card borders |
 
@@ -73,6 +73,74 @@ Do not invent new greens. These are the whole set:
 | `#31624D` | Border on a dark card |
 | `#3F6C58` | Hairline rule on green |
 
+### The plaster texture
+
+Both pages carry a plaster wash. It is one greyscale image stored twice as a CSS
+variable, `--tex` at full strength and `--tex-soft` at 15 per cent.
+
+It works by `background-blend-mode: multiply`. The image sits in the element's own
+background layer and is multiplied into the colour underneath it, so it can never
+touch text, photos or anything else on top. Nothing needs a z-index.
+
+To texture a new block, give it a background colour and add the class `tex`, or add
+its selector to the texture rule at the bottom of the stylesheet.
+
+Two things to know before you change it:
+
+- On the greens the wash only **darkens** a dark ground, so every contrast ratio goes
+  up. You cannot break contrast by adding it to a green block.
+- On ivory it darkens a light ground, so contrast goes **down**. That is why it runs at
+  15 per cent there, only on `body`, and only above 900px wide. `--ink-faint` and
+  `--terracotta-text` were darkened to clear 4.5:1 even on the texture's darkest pixel.
+  If you strengthen the ivory wash, recompute both.
+
+### The bookmark
+
+The vertical logo on its bookmark is the only mark in the nav. It links home.
+
+- **Wide screens (1020px and up):** the bar becomes a three column grid, `1fr auto 1fr`.
+  Two equal outer columns put the middle one dead centre, which is where the bookmark
+  hangs. Four links sit left, three links and the RSVP button sit right.
+- **Below 1020px:** it moves to the top left and the links collapse into the menu button.
+- It is `position: absolute`, so it can hang past the bar without making the bar taller.
+- A few lines of JS add `.scrolled` to the header once the page moves. The bar and the
+  bookmark then shrink **together**, 66px to 52px and 96px to 76px, so the overhang stays
+  at about 45 per cent of the bar height either way. Shrink one without the other and the
+  mark looks stranded. Remove the class entirely and the bookmark sits on top of the page
+  as you scroll.
+
+Both pages carry the same nav. On `merch.html` it is called `.topnav` / `.topbar`, because
+`.bar` on that page is already the fixed order bar at the bottom. Its page header is
+`header.head`, not bare `header`, because the nav is a `<header>` too and the bare
+selector would clip the bookmark.
+
+The bookmark is terracotta, not gold. Ivory on terracotta measures 3.05:1, which is fine
+for a logotype (WCAG exempts them) but is **not** a pairing to reuse for real text.
+
+### Icons
+
+Line icons, inline SVG, one 24x24 grid, `stroke-width` 1.7, `currentColor`, no fills.
+17px in an eyebrow, 28px on a card. They inherit the colour of whatever they sit in.
+
+**The bird submark is not an all-purpose icon.** It earns its place in the nav bookmark
+and the footer mark. Everywhere else, use an icon that means the thing: a target for
+mission, an eye for vision, a calendar for the hangouts, a tag for merch. A mark that
+appears on every single section stops reading as a mark and starts reading as decoration.
+
+Adding a new section? Draw the icon on the same grid at the same weight, or reuse one
+already in the file. Do not import an icon library.
+
+### Nav order follows the page
+
+The nav, the mobile menu and the footer Explore column list the sections in the order a
+visitor actually scrolls past them:
+
+**3 Oct Social, Merch, About, How it works, Reading, Community, Partners**
+
+If you add, remove or move a section, move its link in all three places to match.
+A nav in a different order to the page makes scrolling feel broken even when every
+link works.
+
 ### Contrast is not optional
 
 Every text and background pair on this site has been measured. Keep it that way.
@@ -88,6 +156,8 @@ Verified pairings on `#0C4831`:
 | Mustard Gold `#EFAE1E` | 5.41:1 | Safe |
 | Sage `#98B095` | 4.52:1 | Safe, but only just. Do not darken it |
 | Terracotta `#C55B3D` | 2.49:1 | **Never put terracotta on green** |
+
+Those are the flat values. With the texture on, each one measures higher, not lower.
 
 If you change a colour, compute the ratio before committing. Do not estimate it by eye.
 
@@ -146,9 +216,24 @@ and RSVPs and merch orders stop being recorded. They look like dead code. They a
 
 **`netlify.toml`.** Sets caching, security headers, and the `/merch` short link.
 
+**`--tex` and `--tex-soft`.** Two long base64 strings near the top of each file. They are
+the plaster wash. They look like garbage. Deleting them flattens both pages.
+
 **The `record()` function in `merch.html`** and the `fetch('/')` block in `index.html`.
 These POST each submission to Netlify Forms. The WhatsApp handoff runs alongside them,
 not instead of them.
+
+**The `<head>`.** Both pages open with `<!doctype html>`, `<html lang="en">` and a full
+head: charset, viewport, description, theme colour, the Open Graph and Twitter tags, the
+canonical URL, the favicon links and the fonts. `index.html` also carries a JSON-LD
+Organization block. None of it is visible on the page, which is exactly why it goes
+missing. Without the doctype the browser drops into quirks mode and the layout breaks.
+Without the viewport tag the phone layout breaks. Without the Open Graph tags a shared
+link has no title or description.
+
+Nothing on either page references an image file. Every image, including the texture and
+the bookmark, is a base64 string inside the HTML. The only files the pages ask the server
+for are `favicon.png`, `apple-touch-icon.png` and `share-card.jpg`.
 
 ---
 
@@ -174,6 +259,10 @@ the page can be shared. Delete that whole block once they are filled.
 
 **Testimonials are deliberately empty.** Do not write quotes and attribute them to
 members. Real quotes only, collected with permission.
+
+**`share-card.jpg` does not exist yet.** Both pages point their Open Graph tags at it.
+Until a real 1200x630 image sits in the repo root, links shared on WhatsApp or LinkedIn
+show a title and description but no picture.
 
 ---
 
@@ -204,3 +293,6 @@ The site is in event mode and will need unwinding:
 Choose the quieter option, then ask. Adding a colour, a typeface or a new component is
 how a brand ends up with two of everything. The full brand system, including the logo
 rules, the archetypes and the messaging, lives in the Flocking Birds brand guidelines.
+
+The decks use the same plaster wash on their green pages, so a slide and a section of
+the site now read as the same surface. If you change the texture here, change it there.
