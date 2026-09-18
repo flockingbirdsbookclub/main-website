@@ -117,6 +117,22 @@ selector would clip the bookmark.
 The bookmark is terracotta, not gold. Ivory on terracotta measures 3.05:1, which is fine
 for a logotype (WCAG exempts them) but is **not** a pairing to reuse for real text.
 
+### The hero headline
+
+`<h1>` holds two sentences, each in its own `<span class="l">`. The span is `display:block`
+with `text-wrap: balance`, so the headline always breaks **between** the sentences and each
+one balances on its own. Do not put a `<br>` back in: a `<br>` forces one break but does
+nothing to stop each half wrapping again, which is how it ended up as four ragged lines.
+
+Two settings keep it to two lines from 480px to 1440px:
+
+- `font-variation-settings: 'wdth' 106` — Archivo is an extended face and 118 was too wide
+  for the hero column
+- `font-size` tops out at `3.6rem`, and the hero only goes two column at **1120px**, not
+  900px, because between those widths the text column is too narrow for the headline
+
+Change the copy and you have to re-check the line count at 390, 768, 1120 and 1440.
+
 ### Icons
 
 Line icons, inline SVG, one 24x24 grid, `stroke-width` 1.7, `currentColor`, no fills.
@@ -140,6 +156,52 @@ visitor actually scrolls past them:
 If you add, remove or move a section, move its link in all three places to match.
 A nav in a different order to the page makes scrolling feel broken even when every
 link works.
+
+### Green sections must be `.band`
+
+Every colour on this site defaults to the **light** ground: `h2` is green, body text is
+brown, eyebrows are terracotta. The `.band` class is what flips all of that for a dark
+ground, in one place:
+
+```css
+.band{background:var(--nest);color:var(--ivory)}
+.band h2,.band h3,.band h4{color:var(--ivory)}
+.band p{color:#CFC2AE}
+.band .eyebrow{color:var(--gold)}
+```
+
+Give a section a green background **without** `.band` and it silently keeps the light
+ground colours: a green heading on a green background, terracotta on green at 2.49:1,
+invisible sub-headings. Nothing errors. It just disappears. That is exactly what happened
+to the join section, and it went unnoticed for weeks because the body copy was the one
+thing that still happened to be readable.
+
+So: green background, `class="band"`. Always. If a section needs green and cannot take
+the class, copy all four rules across, not just the background.
+
+### Alternate light and dark
+
+Sections go green, ivory, green, ivory down the page. Two of the same in a row read as one
+long section and the boundary between them vanishes. The current order:
+
+```
+hero          green      about       ivory      community   ivory
+the Social    ivory      pillars     green      partners    green
+merch         green      how         ivory      join        ivory
+              reading    green       shelf      ivory       footer   green
+```
+
+Shelf, champions and community run together on purpose. They use `padding-top:0` so they
+read as one long ivory stretch, not three sections.
+
+Before adding a section, check what is above and below it, and give it `.band` if it lands
+on a green beat.
+
+### Yes and no lists
+
+`.ticks.yes` and `.ticks.no` are the scannable qualifier lists, used for "Join us if" and
+"Not for you if". The tick and cross are drawn with `::before` content, so there is no icon
+file to ship. One line per item. If an item needs two lines it is too long, cut it.
 
 ### Contrast is not optional
 
@@ -244,6 +306,8 @@ for are `favicon.png`, `apple-touch-icon.png` and `share-card.jpg`.
 | Merch products, prices, colours, sizes | `merch.html`, the `PRODUCTS` array |
 | Preorder deadline, deposit %, WhatsApp number | `merch.html`, the `CONFIG` object above it |
 | RSVP WhatsApp number | `index.html`, search `var WA` |
+| Join button destination | `index.html`, search `JOIN_URL`. Empty means it opens WhatsApp |
+| Merch product photos | `merch.html`, the `photo` field on each product. Feeds the cards and the order thumbnails |
 | Current book and dates | `index.html`, search `Currently reading` |
 | Event details | `index.html`, the `<section id="social">` block |
 
@@ -259,6 +323,16 @@ the page can be shared. Delete that whole block once they are filled.
 
 **Testimonials are deliberately empty.** Do not write quotes and attribute them to
 members. Real quotes only, collected with permission.
+
+**The join and partner buttons open WhatsApp.** There is no join form yet. Paste a Google
+Form or Tally URL into `JOIN_URL` in `index.html` and the button switches to it, changes
+its own label, and the WhatsApp fallback stops being used. Until then nobody hits a dead
+button.
+
+**The order summary shows a thumbnail per line.** It uses each product's `photo`, and falls
+back to a tile with the product kind while photos are still missing. Clicking a thumbnail or
+a product name scrolls back to that card and flashes it, and "Add something else" returns to
+the shop. Fill in `photo` and all of that starts showing real product shots.
 
 **`share-card.jpg` does not exist yet.** Both pages point their Open Graph tags at it.
 Until a real 1200x630 image sits in the repo root, links shared on WhatsApp or LinkedIn

@@ -199,6 +199,28 @@ h1{font-family:var(--d);font-weight:800;font-size:clamp(32px,7vw,54px);line-heig
 .line .rm{background:none;border:0;color:var(--terra-t);font-size:13px;cursor:pointer;
   padding:10px 8px;min-height:44px;text-decoration:underline}
 .line .rm:focus-visible{outline:2.5px solid var(--terra);outline-offset:2px}
+
+/* Order line thumbnail. Falls back to the product kind while photos are missing. */
+.line{grid-template-columns:auto 1fr auto auto}
+.line .thumb{width:54px;height:54px;flex:none;border:1px solid var(--rule-s);border-radius:9px;
+  overflow:hidden;background:var(--stone);padding:0;cursor:pointer;display:flex;
+  align-items:center;justify-content:center}
+.line .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.line .thumb .tk{font-family:var(--d);font-weight:700;font-size:7.5px;letter-spacing:.03em;
+  color:#5E5044;text-align:center;line-height:1.25;padding:0 2px;overflow-wrap:anywhere}
+.line .thumb:focus-visible{outline:2.5px solid var(--terra);outline-offset:2px}
+.line .nm{background:none;border:0;padding:0;text-align:left;cursor:pointer;
+  font-family:var(--b);font-weight:700;font-size:15px;color:var(--ink)}
+.line .nm:hover{text-decoration:underline}
+.line .nm:focus-visible{outline:2.5px solid var(--terra);outline-offset:2px}
+.addmore{display:inline-block;margin-top:16px;font-weight:700;font-size:14.5px;
+  color:var(--nest);text-decoration:none;border-bottom:2px solid var(--gold);padding-bottom:2px}
+.addmore:hover{color:var(--deep)}
+.card.flash{box-shadow:0 0 0 3px var(--gold)}
+@media(max-width:520px){
+  .line{grid-template-columns:auto 1fr auto;row-gap:8px}
+  .line .rm{grid-column:2/4;justify-self:start}
+}
 .totals{padding:18px 20px;background:#fff}
 .tl{display:flex;justify-content:space-between;gap:14px;font-size:15px;color:var(--ink-s);
   padding-block:5px}
@@ -602,7 +624,7 @@ $('#grid').addEventListener('click', e => {
     const found = order.find(l => l.key === key);
     if (found) found.qty += qty;
     else order.push({ key, name: p.name, kind: p.kind, variant: chosen.join(' · '),
-                      price: p.price, qty });
+                      price: p.price, qty, photo: p.photo, pi: +card.dataset.i });
     btn.textContent = 'Added';
     btn.classList.add('done');
     setTimeout(() => { btn.textContent = 'Add to order'; btn.classList.remove('done'); }, 1400);
@@ -629,12 +651,21 @@ function render(){
     return;
   }
 
+  // Each line carries a thumbnail and jumps back to the card it came from, so you
+  // can change your mind without hunting for the product again.
   wrap.innerHTML = '<ul class="lines">' + order.map((l, i) =>
-    '<li class="line"><div><div class="nm">' + l.name + ' &times; ' + l.qty + '</div>'
+    '<li class="line">'
+    + '<button class="thumb" type="button" data-go="' + l.pi + '" '
+    + 'aria-label="Back to ' + l.name + '">'
+    + (l.photo ? '<img src="' + l.photo + '" alt="">'
+               : '<span class="tk">' + l.kind + '</span>') + '</button>'
+    + '<div class="meta"><button class="nm" type="button" data-go="' + l.pi + '">'
+    + l.name + ' &times; ' + l.qty + '</button>'
     + '<div class="vr">' + l.variant + '</div></div>'
     + '<span class="amt">' + money(l.qty * l.price) + '</span>'
     + '<button class="rm" type="button" data-rm="' + i + '">Remove</button></li>'
-  ).join('') + '</ul>';
+  ).join('') + '</ul>'
+  + '<a class="addmore" href="#shop">Add something else</a>';
 
   $('#t-count').textContent = count;
   $('#t-total').textContent = money(total);
@@ -650,6 +681,16 @@ function render(){
 }
 
 $('#lines-wrap').addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) {
+    const card = $('#grid').children[+go.dataset.go];
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('flash');
+      setTimeout(() => card.classList.remove('flash'), 1400);
+    }
+    return;
+  }
   const b = e.target.closest('[data-rm]');
   if (!b) return;
   order.splice(+b.dataset.rm, 1);
@@ -659,7 +700,7 @@ $('#lines-wrap').addEventListener('click', e => {
 /* ---- send ---- */
 function summary(){
   const { count, total, dep } = totals();
-  const lines = order.map(l => '• ' + l.qty + ' × ' + l.name + ' (' + l.variant + ') — '
+  const lines = order.map(l => '• ' + l.qty + ' × ' + l.name + ' (' + l.variant + ') \u00B7 '
     + money(l.qty * l.price)).join('\n');
   const name  = $('#o-name').value.trim()  || '(name not given)';
   const phone = $('#o-phone').value.trim() || '(phone not given)';
