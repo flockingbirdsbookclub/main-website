@@ -138,6 +138,8 @@ header.nav{position:sticky;top:0;z-index:60;background:var(--nest);
 .ph.done::after{display:none}
 .ph img,.ph svg{width:100%;height:100%;object-fit:cover;display:block}
 .r43{aspect-ratio:4/3}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r1{aspect-ratio:1}
+.slotlabel{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  text-align:center;font-family:var(--mono);font-size:.7rem;color:#fff;padding:12px}
 
 /* ---------- generic blocks ---------- */
 .band{background:var(--nest);color:var(--ivory)}
@@ -279,6 +281,7 @@ footer .base{border-top:1px solid #1A523C;margin-top:34px;padding-top:20px;font-
 .ph[data-slot]:not([data-done]):not([data-slot=""])::before{content:"TO DO";position:absolute;
   top:8px;left:8px;z-index:2;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;
   font-weight:700;color:#3A2A08;background:var(--gold);padding:3px 7px;border-radius:20px}
+[data-pending]{position:relative;outline:2px dashed #C9A227;outline-offset:-4px}
 [data-pending]::after{content:"TO DO";position:absolute;top:8px;left:8px;z-index:2;
   font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;font-weight:700;color:#3A2A08;
   background:var(--gold);padding:3px 7px;border-radius:20px}
