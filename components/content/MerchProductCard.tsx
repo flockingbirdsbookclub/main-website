@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { PhotoSlot } from "@/components/ui/PhotoSlot";
-import { Button } from "@/components/ui/Button";
 
 export type MerchOption = {
   label: string;
@@ -28,17 +26,21 @@ export type MerchSelection = {
   price: number;
   photoSrc?: string | null;
   qty: number;
-  variant: string; // e.g. "Forest / M"
+  variant: string; // e.g. "forest / M"
 };
 
-// Swatch colour mapping, ported from merch.html's COLOURS map.
+// Swatch colour values, ported verbatim from merch.html's COLOURS map.
 const SWATCH_COLOURS: Record<string, string> = {
-  Forest: "#0C4831",
-  Navy: "#1C2B4A",
-  Cream: "#F3EDE3",
-  Black: "#201A16",
-  Clay: "#C55B3D",
+  forest: "#0C4831",
+  navy: "#1F2E45",
+  cream: "#EFE6D6",
+  black: "#211E1B",
+  clay: "#B4634A",
 };
+
+function titled(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 export function MerchProductCard({
   product,
@@ -53,6 +55,7 @@ export function MerchProductCard({
     Object.fromEntries(product.options.map((opt) => [opt.label, opt.values[0]]))
   );
   const [qty, setQty] = useState(1);
+  const [justAdded, setJustAdded] = useState(false);
 
   function handleAdd() {
     const variant = product.options.map((opt) => selected[opt.label]).join(" / ");
@@ -65,96 +68,91 @@ export function MerchProductCard({
       qty,
       variant,
     });
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1600);
   }
 
   return (
-    <div className="card">
-      {product.photoSrc ? (
-        <PhotoSlot src={product.photoSrc} alt={product.name} ratio="r1" slotLabel="" />
-      ) : (
-        <div className="ph r1">
+    <div className="product-card">
+      <div className="product-photo">
+        {product.photoSrc ? (
+          <img src={product.photoSrc} alt={product.name} />
+        ) : (
           <span className="slotlabel">
             PHOTO SLOT
             <br />
             {product.name}
           </span>
+        )}
+        <span className="kind">{product.kind}</span>
+      </div>
+
+      <div className="product-body">
+        <div className="row1">
+          <h3>{product.name}</h3>
+          <span className="price">
+            {currency} {product.price.toLocaleString()}
+          </span>
         </div>
-      )}
+        <p className="blurb">{product.blurb}</p>
 
-      <div className="num">{product.kind}</div>
-      <h3>{product.name}</h3>
-      <p>{product.blurb}</p>
-      <p className="mono">
-        {currency} {product.price.toLocaleString()}
-      </p>
-
-      {product.options.map((opt) => (
-        <div key={opt.label}>
-          <div className="mono">{opt.label}</div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "8px 0" }}>
-            {opt.values.map((value) => {
-              const isActive = selected[opt.label] === value;
-              if (opt.swatch) {
+        {product.options.map((opt) => (
+          <div className="opt" key={opt.label}>
+            <div className="lab">{opt.label}</div>
+            <div className="choices">
+              {opt.values.map((value) => {
+                const isActive = selected[opt.label] === value;
+                if (opt.swatch) {
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      className="sw"
+                      aria-label={titled(value)}
+                      aria-pressed={isActive}
+                      style={{ background: SWATCH_COLOURS[value] ?? "#999" }}
+                      onClick={() => setSelected((s) => ({ ...s, [opt.label]: value }))}
+                    />
+                  );
+                }
                 return (
                   <button
                     key={value}
                     type="button"
-                    aria-label={value}
+                    className="chip"
                     aria-pressed={isActive}
                     onClick={() => setSelected((s) => ({ ...s, [opt.label]: value }))}
-                    style={{
-                      width: 28,
-                      height: 28,
-                      borderRadius: "50%",
-                      background: SWATCH_COLOURS[value] ?? "#999",
-                      border: isActive ? "2px solid var(--gold)" : "2px solid var(--rule)",
-                      cursor: "pointer",
-                    }}
-                  />
+                  >
+                    {value}
+                  </button>
                 );
-              }
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  aria-pressed={isActive}
-                  onClick={() => setSelected((s) => ({ ...s, [opt.label]: value }))}
-                  className="btn btn-line"
-                  style={{ padding: "6px 14px", minHeight: "auto" }}
-                >
-                  {value}
-                </button>
-              );
-            })}
+              })}
+            </div>
+            {opt.swatch ? <div className="swname">{titled(selected[opt.label])}</div> : null}
           </div>
+        ))}
+
+        <div className="addrow">
+          <div className="stepper">
+            <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">
+              −
+            </button>
+            <span>{qty}</span>
+            <button type="button" onClick={() => setQty((q) => q + 1)} aria-label="Increase quantity">
+              +
+            </button>
+          </div>
+          <button type="button" className={["add", justAdded ? "done" : ""].join(" ")} onClick={handleAdd}>
+            {justAdded ? "Added ✓" : "Add to order"}
+          </button>
         </div>
-      ))}
 
-      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "12px 0" }}>
-        <button type="button" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease quantity">
-          −
-        </button>
-        <span>{qty}</span>
-        <button type="button" onClick={() => setQty((q) => q + 1)} aria-label="Increase quantity">
-          +
-        </button>
+        {product.partnerStoreUrl ? (
+          <a className="addmore" href={product.partnerStoreUrl} target="_blank" rel="noopener noreferrer">
+            Or order from our partner store
+          </a>
+        ) : null}
       </div>
-
-      <Button variant="dark" onClick={handleAdd}>
-        Add to order
-      </Button>
-
-      {product.partnerStoreUrl ? (
-        <a
-          className="btn-line"
-          style={{ display: "block", marginTop: 8, textAlign: "center" }}
-          href={product.partnerStoreUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Order from partner store
-        </a>
-      ) : null}
     </div>
   );
 }

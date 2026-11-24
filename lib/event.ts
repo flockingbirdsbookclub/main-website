@@ -16,6 +16,6 @@ export type EventInfo = {
   bring: string;
 };
 
-export function rsvpCtaLabel(event: EventInfo): string {
-  return `RSVP · ${event.shortLabel}`;
+export function rsvpCtaLabel(shortLabel: string): string {
+  return `RSVP · ${shortLabel}`;
 }

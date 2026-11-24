@@ -50,7 +50,7 @@ const partners: Partner[] = [
 export default function Home() {
   return (
     <>
-      <Nav page="home" rsvpLabel={rsvpCtaLabel(event)} eventShortLabel={event.shortLabel} />
+      <Nav page="home" rsvpLabel={rsvpCtaLabel(event.shortLabel)} eventShortLabel={event.shortLabel} />
 
       <main id="top">
         {/* ========== HERO ========== */}
