@@ -6,11 +6,9 @@ import { NAV_LINKS_LEFT, NAV_LINKS_RIGHT, NAV_LINKS, resolveNavHref } from "@/li
 
 export function Nav({
   page,
-  rsvpLabel,
   eventShortLabel,
 }: {
   page: "home" | "merch";
-  rsvpLabel: string;
   eventShortLabel: string;
 }) {
   const [scrolled, setScrolled] = useState(false);
@@ -31,8 +29,9 @@ export function Nav({
 
   const bookmarkHref = page === "merch" ? "/" : "#top";
   const bookmarkLabel = page === "merch" ? "Back to the homepage" : "Back to the top";
-  // On merch, the last menu item is "Back to the homepage" (added below), as on the old merch.html.
-  const mobileLinks = page === "merch" ? NAV_LINKS : [...NAV_LINKS, { label: "Join the flock", hash: "#join" as const }];
+  // The one gold button in the bar is always "Join the flock". The next Social
+  // is the first text link, so attending is one tap away but never louder.
+  const joinHref = page === "merch" ? "/#join" : "#join";
 
   return (
     <header className={["nav", scrolled ? "scrolled" : ""].filter(Boolean).join(" ")} id="nav">
@@ -43,11 +42,7 @@ export function Nav({
 
         <nav className="links links-l" aria-label="Primary">
           {NAV_LINKS_LEFT.map((link) => (
-            <a
-              key={link.hash}
-              href={resolveNavHref(link, page)}
-              aria-current={page === "merch" && link.hash === "#merch" ? "page" : undefined}
-            >
+            <a key={link.hash} href={resolveNavHref(link, page)}>
               {link.hash === "#social" ? `${eventShortLabel} Social` : link.label}
             </a>
           ))}
@@ -63,8 +58,8 @@ export function Nav({
               </a>
             ))}
           </nav>
-          <a className="btn btn-gold cta" href={page === "merch" ? "/#social" : "#social"}>
-            {rsvpLabel}
+          <a className="btn btn-gold cta" href={joinHref}>
+            Join the flock
           </a>
         </div>
 
@@ -82,7 +77,7 @@ export function Nav({
       <div id="mobnav" hidden={!open}>
         <div className="wrap">
           <ul>
-            {mobileLinks.map((link) => (
+            {NAV_LINKS.map((link) => (
               <li key={link.hash}>
                 <a href={resolveNavHref(link, page)} onClick={() => setOpen(false)}>
                   {link.hash === "#social" ? `${eventShortLabel} Social` : link.label}
@@ -95,8 +90,8 @@ export function Nav({
               </li>
             ) : null}
           </ul>
-          <a className="btn btn-gold cta" href={page === "merch" ? "/#social" : "#social"} onClick={() => setOpen(false)}>
-            {rsvpLabel}
+          <a className="btn btn-gold cta" href={joinHref} onClick={() => setOpen(false)}>
+            Join the flock
           </a>
         </div>
       </div>

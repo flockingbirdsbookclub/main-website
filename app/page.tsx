@@ -8,7 +8,7 @@ import { TicksList } from "@/components/ui/TicksList";
 import { EventBanner } from "@/components/content/EventBanner";
 import { BookCard, type Book } from "@/components/content/BookCard";
 import { PartnerCard, type Partner } from "@/components/content/PartnerCard";
-import { rsvpCtaLabel, type EventInfo } from "@/lib/event";
+import type { EventInfo } from "@/lib/event";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 // Join button. Paste a Google Form or Tally URL into JOIN_URL and the button
@@ -27,43 +27,116 @@ const partnerHref = buildWhatsAppLink(
     "Business:\nWhat we offer:\nWhat we would like to do with the flock:",
 );
 
-// Real content as of this rebuild, ported verbatim from the legacy
-// index.html — including its own still-unfilled placeholders (current
-// book, partner names, testimonials). Per CLAUDE.md: never invent content
-// that looks real. This becomes a Supabase read in a later phase; for now
-// it's the single object every date-dependent spot on the page consumes.
+// Page content. Each block below becomes a Supabase table the admin edits
+// (Phases 5 to 11). Until then, edit it here. Rule: only real content goes in.
+// An empty list hides its section rather than showing a TO DO box.
+
+const KIBANGA = "Kibanga Books";
+
 const event: EventInfo = {
-  eyebrowText: "The BookClub Social · Sat 3 October · open to everyone",
-  shortLabel: "3 Oct",
-  pillText: "Saturday 3 October",
-  heading: "The BookClub Social",
-  time: "1:00–6:00 PM",
-  venueName: "Nairobi",
-  venueAddress: "venue shared with everyone who RSVPs",
+  heading: "BookClub Social 4.0",
+  edition: "Surrounded by Idiots edition",
+  tagline: "Four personality types. One room. Which one are you?",
+  shortLabel: "5 Dec",
+  pillText: "Saturday 5 December",
+  time: "12:00–6:00 PM",
+  venueName: "Golden Tulip Westlands",
+  price: "KES 2,000",
+  priceNote: "covers a buffet lunch",
   who: "Open to everyone. You do not need to be a member",
   bring: "Yourself. Bring a friend who reads, or one who says they will",
+  posterSrc: "/images/social/bookclub_social_4.jpg",
+  posterAlt:
+    "Poster for BookClub Social 4.0, Surrounded by Idiots edition: four personality types, one room. Saturday 5 December, 12 to 6 PM, Golden Tulip Westlands, KES 2,000 covers buffet lunch.",
 };
 
 const currentBook: Book = {
-  title: "Add the current title here",
-  author: "Author Name",
-  purchaseUrl: null,
+  title: "Surrounded by Idiots",
+  author: "Thomas Erikson",
+  coverSrc: "/images/books/surrounded_by_idiots-web.jpg",
+  purchaseUrl: "https://kibangabooks.com/books/surrounded-by-idiotsthomas-erikson/",
+  partnerStoreName: KIBANGA,
 };
 
 const shelfBooks: Book[] = [
-  { title: "Blue Ocean Strategy", author: "Kim & Mauborgne", tag: "Heavy", purchaseUrl: null },
-  { title: "The Innovation Stack", author: "Jim McKelvey", tag: "Heavy", purchaseUrl: null },
-  { title: "How Will You Measure Your Life?", author: "Clayton Christensen", tag: "Heavy", purchaseUrl: null },
-  { title: "Steal Like an Artist", author: "Austin Kleon", tag: "Lighter", purchaseUrl: null },
-  { title: "Show Your Work!", author: "Austin Kleon", tag: "Lighter", purchaseUrl: null },
+  {
+    title: "Blue Ocean Strategy",
+    author: "Kim & Mauborgne",
+    tag: "Heavy",
+    coverSrc: "/images/books/Blue-Ocean-Strategy-web.jpg",
+    purchaseUrl: "https://kibangabooks.com/books/blue-ocean-strategy-w-chan-kim-reneemouborgne-paperback/",
+    partnerStoreName: KIBANGA,
+  },
+  {
+    title: "The Great Mental Models",
+    author: "Shane Parrish",
+    coverSrc: "/images/books/great_mental_models.jpg",
+    purchaseUrl: "https://kibangabooks.com/books/the-great-mental-models-by-parrish-shane/",
+    partnerStoreName: KIBANGA,
+  },
+  {
+    title: "The Innovation Stack",
+    author: "Jim McKelvey",
+    tag: "Heavy",
+    coverSrc: "/images/books/innovation-stack-web.jpg",
+    purchaseUrl: null, // no Kibanga link yet
+  },
+  {
+    title: "How Will You Measure Your Life?",
+    author: "Clayton Christensen",
+    tag: "Heavy",
+    coverSrc: "/images/books/how_will_measure_your_life.jpg",
+    purchaseUrl:
+      "https://kibangabooks.com/books/how-will-you-measure-your-life-by-clayton-m-christensen-james-allworth-karen-dillon/",
+    partnerStoreName: KIBANGA,
+  },
+  {
+    title: "Steal Like an Artist",
+    author: "Austin Kleon",
+    tag: "Lighter",
+    coverSrc: "/images/books/steal-like-an-artist.jpg",
+    purchaseUrl:
+      "https://kibangabooks.com/books/steal-like-an-artist-10-things-nobody-told-you-about-being-creative-by-austin-kleon/",
+    partnerStoreName: KIBANGA,
+  },
+  {
+    title: "Show Your Work!",
+    author: "Austin Kleon",
+    tag: "Lighter",
+    coverSrc: "/images/books/show-your-work.jpg",
+    purchaseUrl:
+      "https://kibangabooks.com/books/show-your-work-10-ways-to-share-your-creativity-and-get-discovered-austin-kleon-book-by-austin-kleon/",
+    partnerStoreName: KIBANGA,
+  },
 ];
 
 const partners: Partner[] = [
-  { name: "Partner name", description: "Bookshop · 10% member discount", url: null },
-  { name: "Partner name", description: "Venue", url: null },
-  { name: "Partner name", description: "Photography", url: null },
-  { name: "Partner name", description: "Catering", url: null },
+  {
+    name: KIBANGA,
+    role: "Bookshop · 10% off for members",
+    imageSrc: "/images/partners/kibanga_books.jpg",
+    url: "https://kibangabooks.com/",
+  },
+  {
+    name: "Book Embossers",
+    role: "Embossed \u201CFrom the library of\u201D stamps",
+    imageSrc: "/images/partners/book_embossers.jpg",
+    url: "https://www.instagram.com/bookembossers_ke/",
+  },
+  {
+    name: "Punny Crafts",
+    role: "Gifting partner",
+    imageSrc: "/images/partners/punny_crafts.jpg",
+    url: "https://www.instagram.com/punnycraftskenya/",
+  },
 ];
+
+// Member posts and quotes. Real ones only, with permission. Empty for now,
+// so the "From the flock" block does not render.
+type Post = { kind: string; title: string; excerpt: string; who: string; url: string; imageSrc?: string };
+type Testimonial = { quote: string; name: string; flock: string; avatarSrc?: string };
+const posts: Post[] = [];
+const testimonials: Testimonial[] = [];
 
 // Homepage-only metadata. Next.js replaces (does not merge) the layout's
 // openGraph block, so the full set is repeated here with the homepage URL.
@@ -94,7 +167,7 @@ const organisationJsonLd = {
 export default function Home() {
   return (
     <>
-      <Nav page="home" rsvpLabel={rsvpCtaLabel(event.shortLabel)} eventShortLabel={event.shortLabel} />
+      <Nav page="home" eventShortLabel={event.shortLabel} />
 
       <script
         type="application/ld+json"
@@ -106,8 +179,10 @@ export default function Home() {
           <div className="wrap grid">
             <div style={{ paddingBottom: "clamp(30px,5vw,56px)" }}>
               <a className="evt" href="#social">
-                <span className="evt-tag">THIS MONTH</span>
-                <span className="evt-txt">{event.eyebrowText}</span>
+                <span className="evt-tag">NEXT SOCIAL</span>
+                <span className="evt-txt">
+                  {event.heading} · {event.pillText} · open to everyone
+                </span>
                 <span className="evt-go" aria-hidden="true">
                   →
                 </span>
@@ -121,11 +196,11 @@ export default function Home() {
                 actually apply them, and hold each other to it.
               </p>
               <div className="acts">
-                <a className="btn btn-gold" href="#social">
-                  RSVP for 3 October
-                </a>
-                <a className="btn btn-out" href="#join">
+                <a className="btn btn-gold" href="#join">
                   Join the flock
+                </a>
+                <a className="btn btn-out" href="#social">
+                  Attend Social 4.0
                 </a>
               </div>
               <p className="note">200+ members · 12 flocks across Nairobi · new members welcome any cycle</p>
@@ -168,53 +243,11 @@ export default function Home() {
 
         <EventBanner
           event={event}
-          description="Every cycle ends the same way. The whole flock in one room for the community book review, the flock awards, games, food, and the announcement of what we read next. Our third one, and the biggest so far."
-          photoSrc="/images/social/photo.jpg"
+          description="Every cycle ends the same way: the whole flock in one room. This time the book is Surrounded by Idiots, so the day is built around its four personality types. Book review, flock awards, games, a buffet lunch, and the announcement of what we read next."
         />
 
-        {/* ========== MERCH (time-boxed) ========== */}
-        <Band id="merch">
-          <div className="wrap">
-            <div className="merch-wrap">
-              <div>
-                <p className="eyebrow">
-                  <TagIcon />
-                  First drop
-                </p>
-                <h2>Merch, before it exists</h2>
-                <p className="lede" style={{ marginTop: 16 }}>
-                  Punny tees, an embroidered cap, a canvas tote and a set of archetype bookmarks. We
-                  print to order, so nothing gets made unless enough of the flock wants it.
-                </p>
-                <p style={{ marginTop: 14, maxWidth: "56ch" }}>
-                  Reserve your size with a deposit and collect it at the Social on 3 October. If an
-                  item does not hit its run, you get the deposit back in full.
-                </p>
-                <div className="deadline">PREORDERS CLOSE 22 SEPTEMBER</div>
-                <div className="acts" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 22 }}>
-                  <a className="btn btn-gold" href="/merch">
-                    Reserve your merch
-                  </a>
-                </div>
-              </div>
-              <div>
-                <div className="mrow">
-                  <div className="ph" data-slot="TEE" />
-                  <div className="ph" data-slot="CAP" />
-                  <div className="ph" data-slot="TOTE" />
-                </div>
-                <div className="mrow" style={{ marginTop: 12 }}>
-                  <div className="ph" data-slot="BOOKMARKS" />
-                  <div className="ph" data-slot="TEE 2" />
-                  <div className="ph" data-slot="TEE 3" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Band>
-
-        {/* ========== ABOUT ========== */}
-        <section id="about">
+        {/* ========== ABOUT + PILLARS (one green band) ========== */}
+        <Band id="about">
           <div className="wrap">
             <div className="two wide">
               <div>
@@ -254,35 +287,31 @@ export default function Home() {
             <CardGrid columns={3} className="about-cards">
               <Card icon={<TargetIcon />}>
                 <h4>Our mission</h4>
-                <p style={{ color: "var(--ink-soft)", marginTop: 8 }}>
+                <p style={{ marginTop: 8 }}>
                   To create intentional spaces where ambitious people grow through books,
                   conversation, accountability and community.
                 </p>
               </Card>
               <Card icon={<EyeIcon />}>
                 <h4>Our vision</h4>
-                <p style={{ color: "var(--ink-soft)", marginTop: 8 }}>
+                <p style={{ marginTop: 8 }}>
                   A world where no one has to navigate their growth journey alone.
                 </p>
               </Card>
               <Card icon={<CheckCircleIcon />}>
                 <h4>Our promise</h4>
-                <p style={{ color: "var(--ink-soft)", marginTop: 8 }}>
+                <p style={{ marginTop: 8 }}>
                   Real books. Real conversations. Real growth. Real community.
                 </p>
               </Card>
             </CardGrid>
-          </div>
-        </section>
 
-        {/* ========== PILLARS ========== */}
-        <Band>
-          <div className="wrap">
+            <div className="pillars">
             <p className="eyebrow">
               <PillarsIcon />
               What holds us up
             </p>
-            <h2>Three pillars</h2>
+            <h3 className="pillars-h">Three pillars</h3>
             <p className="lede" style={{ color: "#CFC2AE", marginTop: 16 }}>
               These come together or not at all.
             </p>
@@ -318,6 +347,7 @@ export default function Home() {
                 </p>
               </Card>
             </CardGrid>
+            </div>
           </div>
         </Band>
 
@@ -386,22 +416,23 @@ export default function Home() {
         <Band id="reading">
           <div className="wrap">
             <div className="now">
-              <div className="ph r34 cover" data-slot="COVER · book jacket 3:4" style={{ background: "#235843" }}>
+              <div className="ph r34 cover done" data-slot="" data-done="" style={{ background: "#235843" }}>
                 <img
                   loading="lazy"
-                  src="/images/books/current-cover.png"
-                  alt="Cover of the book the community is currently reading"
+                  src={currentBook.coverSrc ?? ""}
+                  alt={`Cover of ${currentBook.title} by ${currentBook.author}`}
                 />
               </div>
               <div>
                 <span className="pill">Currently reading</span>
                 <h2 style={{ marginTop: 16 }}>{currentBook.title}</h2>
                 <p style={{ color: "#A8BBAE", fontFamily: "var(--mono)", fontSize: ".85rem", marginTop: 6 }}>
-                  by {currentBook.author} · started 00 Month · review night 00 Month
+                  by {currentBook.author} · review night {event.pillText}, at {event.heading}
                 </p>
                 <p style={{ color: "#CFC2AE", maxWidth: "52ch", marginTop: 16 }}>
-                  One or two lines on why the flock picked this book and what everyone is trying to
-                  get out of it. Keep it plain and specific.
+                  Thomas Erikson sorts the way people behave into four colours: Red, Yellow, Green
+                  and Blue. We are reading it to understand the people we work with, and to notice
+                  which one we are when things get tense.
                 </p>
                 <div className="acts" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 24 }}>
                   <a className="btn btn-gold" href="#join">
@@ -411,20 +442,16 @@ export default function Home() {
                     See what we&apos;ve read
                   </a>
                   {currentBook.purchaseUrl ? (
-                    <a className="btn btn-line" href={currentBook.purchaseUrl} target="_blank" rel="noopener noreferrer">
+                    <a className="btn btn-out" href={currentBook.purchaseUrl} target="_blank" rel="noopener noreferrer">
                       Buy from {currentBook.partnerStoreName ?? "our partner"}
                     </a>
-                  ) : (
-                    <span className="btn btn-line" data-pending>
-                      Buy link coming soon
-                    </span>
-                  )}
+                  ) : null}
                 </div>
                 <p style={{ color: "#A8BBAE", fontSize: ".86rem", marginTop: 22, maxWidth: "52ch", lineHeight: 1.65 }}>
                   <b style={{ color: "var(--ivory)" }}>How we do books.</b> We publish the reading
-                  list ahead of time so you can plan. Get your copy from our partner bookshop at a
-                  members&apos; discount, from a library, or however you normally buy books. We
-                  support the authors we read.
+                  list ahead of time so you can plan. Get your copy from Kibanga Books, our partner
+                  bookshop, with 10% off for members, from a library, or however you normally buy
+                  books. We support the authors we read.
                 </p>
               </div>
             </div>
@@ -440,7 +467,8 @@ export default function Home() {
             </p>
             <h2>What we&apos;ve read together</h2>
             <p className="lede" style={{ marginTop: 16 }}>
-              Confirm these titles and dates before this goes live. Add a cover image to each.
+              The books the flock has finished together. Members get 10% off at Kibanga Books, our
+              partner bookshop.
             </p>
             <div className="shelf" style={{ marginTop: 32 }}>
               {shelfBooks.map((book) => (
@@ -451,7 +479,7 @@ export default function Home() {
         </section>
 
         {/* ========== CHAMPIONS ========== */}
-        <section style={{ paddingTop: 0 }}>
+        <section id="community" style={{ paddingTop: 0 }}>
           <div className="wrap">
             <div className="champ">
               <div>
@@ -488,106 +516,55 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ========== COMMUNITY / POSTS ========== */}
-        <section id="community" style={{ paddingTop: 0 }}>
-          <div className="wrap">
-            <p className="eyebrow">
-              <PostsIcon />
-              From the flock
-            </p>
-            <h2>What our members are making</h2>
-            <p className="lede" style={{ marginTop: 16 }}>
-              Reviews, reflections, posts and threads from people in the community. Replace each
-              card with a real post and link it out.
-            </p>
-            <CardGrid columns={3} className="posts">
-              <div className="post">
-                <PhotoSlot src="/images/community/post-placeholder.png" ratio="r169" slotLabel="Post image 16:9" alt="" />
-                <div className="body">
-                  <span className="kind">Book review</span>
-                  <h4>Headline of the member&apos;s review</h4>
-                  <p style={{ color: "var(--ink-soft)", fontSize: ".93rem", margin: 0 }}>
-                    Two lines of the opening paragraph, enough to make someone want to click
-                    through to the full piece.
-                  </p>
-                  <div className="who">Member name · Kiambu Road flock</div>
-                </div>
-              </div>
-              <div className="post">
-                <PhotoSlot src="/images/community/post-placeholder.png" ratio="r169" slotLabel="Post image 16:9" alt="" />
-                <div className="body">
-                  <span className="kind">LinkedIn post</span>
-                  <h4>What this chapter changed at work</h4>
-                  <p style={{ color: "var(--ink-soft)", fontSize: ".93rem", margin: 0 }}>
-                    A short reflection a member shared publicly after applying the monthly
-                    challenge.
-                  </p>
-                  <div className="who">Member name · Online flock</div>
-                </div>
-              </div>
-              <div className="post">
-                <PhotoSlot src="/images/community/post-placeholder.png" ratio="r169" slotLabel="Post image 16:9" alt="" />
-                <div className="body">
-                  <span className="kind">Reflection</span>
-                  <h4>Six months in the flock</h4>
-                  <p style={{ color: "var(--ink-soft)", fontSize: ".93rem", margin: 0 }}>
-                    A longer piece on what changed, written by someone who joined at the March
-                    onboarding.
-                  </p>
-                  <div className="who">Member name · Thika Road flock</div>
-                </div>
-              </div>
-            </CardGrid>
-
-            <CardGrid columns={3} className="testimonials" style={{ marginTop: "clamp(38px,6vw,60px)" }}>
-              <div className="quote">
-                <p>
-                  Replace with a real quote from a member. Two sentences is plenty, and specific
-                  beats glowing every time.
-                </p>
-                <div className="by">
-                  <div className="av">
-                    <img src="/images/community/avatar-placeholder.png" alt="" />
-                  </div>
-                  <div>
-                    <div className="nm">Member name</div>
-                    <div className="fl">Flock name</div>
-                  </div>
-                </div>
-              </div>
-              <div className="quote">
-                <p>
-                  The best testimonials name a concrete thing that changed. A promotion, a side
-                  project shipped, a habit that stuck.
-                </p>
-                <div className="by">
-                  <div className="av">
-                    <img src="/images/community/avatar-placeholder.png" alt="" />
-                  </div>
-                  <div>
-                    <div className="nm">Member name</div>
-                    <div className="fl">Flock name</div>
-                  </div>
-                </div>
-              </div>
-              <div className="quote">
-                <p>
-                  Ask three members at the next hangout. Record it on a phone, transcribe the good
-                  bit, get their nod before publishing.
-                </p>
-                <div className="by">
-                  <div className="av">
-                    <img src="/images/community/avatar-placeholder.png" alt="" />
-                  </div>
-                  <div>
-                    <div className="nm">Member name</div>
-                    <div className="fl">Flock name</div>
-                  </div>
-                </div>
-              </div>
-            </CardGrid>
-          </div>
-        </section>
+        {/* ========== FROM THE FLOCK (renders only with real posts or quotes) ========== */}
+        {posts.length > 0 || testimonials.length > 0 ? (
+          <section style={{ paddingTop: 0 }}>
+            <div className="wrap">
+              <p className="eyebrow">
+                <PostsIcon />
+                From the flock
+              </p>
+              <h2>What our members are making</h2>
+              {posts.length > 0 ? (
+                <CardGrid columns={3} className="posts">
+                  {posts.map((post) => (
+                    <a className="post" key={post.url} href={post.url} target="_blank" rel="noopener noreferrer">
+                      {post.imageSrc ? (
+                        <PhotoSlot src={post.imageSrc} ratio="r169" slotLabel="" alt="" />
+                      ) : null}
+                      <div className="body">
+                        <span className="kind">{post.kind}</span>
+                        <h4>{post.title}</h4>
+                        <p style={{ color: "var(--ink-soft)", fontSize: ".93rem", margin: 0 }}>{post.excerpt}</p>
+                        <div className="who">{post.who}</div>
+                      </div>
+                    </a>
+                  ))}
+                </CardGrid>
+              ) : null}
+              {testimonials.length > 0 ? (
+                <CardGrid columns={3} className="testimonials" style={{ marginTop: "clamp(38px,6vw,60px)" }}>
+                  {testimonials.map((t) => (
+                    <div className="quote" key={t.name}>
+                      <p>{t.quote}</p>
+                      <div className="by">
+                        {t.avatarSrc ? (
+                          <div className="av">
+                            <img src={t.avatarSrc} alt="" />
+                          </div>
+                        ) : null}
+                        <div>
+                          <div className="nm">{t.name}</div>
+                          <div className="fl">{t.flock}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardGrid>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
 
         {/* ========== GALLERY ========== */}
         <section style={{ paddingTop: 0 }}>
@@ -596,7 +573,7 @@ export default function Home() {
               <GalleryIcon />
               The hangouts
             </p>
-            <h2>Two hangouts in, and counting</h2>
+            <h2>Three Socials in, and counting</h2>
             <p className="lede" style={{ marginTop: 16 }}>
               Every flock comes together after each book. Food, debate, awards, and the occasional
               argument about a chapter.
@@ -608,50 +585,62 @@ export default function Home() {
               <img src="/images/gallery/photo-4.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
               <img src="/images/gallery/photo-5.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
+            <div className="recap">
+              <div className="recap-txt">
+                <span className="pill">Social 3.0 · 3 October</span>
+                <h3>The art of communication</h3>
+                <p>
+                  Our guest speaker, Kalekye Mumo, communications coach with Own Your Mic Programs
+                  at KM Network, ran a practical workshop on public speaking.
+                </p>
+              </div>
+              <img
+                src="/images/social/kalekye_mumo_2.JPG"
+                alt="Social 3.0 guest speaker card: Kalekye Mumo, The Art of Communication, a practical workshop on public speaking"
+                loading="lazy"
+              />
+              <img
+                src="/images/social/kalekye_mumo.JPG"
+                alt="Kalekye Mumo, communications coach, Own Your Mic Programs, KM Network"
+                loading="lazy"
+              />
+            </div>
           </div>
         </section>
 
         {/* ========== PARTNERS ========== */}
         <Band id="partners">
           <div className="wrap">
-            <div className="two">
+            <div className="partners-head">
               <div>
                 <p className="eyebrow">
                   <PartnersIcon />
                   Partners
                 </p>
                 <h2>People who show up for us</h2>
-                <p style={{ color: "#CFC2AE", maxWidth: "52ch", marginTop: 16 }}>
+                <p style={{ maxWidth: "56ch", marginTop: 16 }}>
                   Service providers who have volunteered their time, given us deals for events, or
-                  looked after our members. One of them gives every Flocking Birds member 10% off
+                  looked after our members. Kibanga Books gives every Flocking Birds member 10% off
                   books.
                 </p>
-                <p style={{ color: "#CFC2AE", maxWidth: "52ch" }}>
+              </div>
+              <div>
+                <p style={{ maxWidth: "44ch" }}>
                   If you run something our community would genuinely benefit from, we would like to
                   hear from you. We are small, specific and growing fast.
                 </p>
-                <a
-                  className="btn btn-gold"
-                  id="partnerlink"
-                  href={partnerHref}
-                  target="_blank"
-                  rel="noopener"
-                  style={{ marginTop: 12 }}
-                >
+                <a className="btn btn-gold" id="partnerlink" href={partnerHref} target="_blank" rel="noopener">
                   Partner with us
                 </a>
               </div>
-              <div>
-                <div className="plogos" style={{ gridTemplateColumns: "repeat(2,1fr)" }}>
-                  {partners.map((partner, i) => (
-                    <PartnerCard key={i} partner={partner} />
-                  ))}
-                </div>
-                <p className="note" style={{ color: "#93A89B" }}>
-                  Swap each box for the partner&apos;s logo on Warm Ivory.
-                </p>
-              </div>
             </div>
+            {partners.length > 0 ? (
+              <div className="pcards">
+                {partners.map((partner) => (
+                  <PartnerCard key={partner.name} partner={partner} />
+                ))}
+              </div>
+            ) : null}
           </div>
         </Band>
 
@@ -771,15 +760,6 @@ function iconProps() {
     "aria-hidden": true,
     focusable: false,
   };
-}
-
-function TagIcon() {
-  return (
-    <svg {...iconProps()}>
-      <path d="M3.5 11.4V4.6a1.1 1.1 0 0 1 1.1-1.1h6.8a1.1 1.1 0 0 1 .8.3l8 8a1.1 1.1 0 0 1 0 1.6l-6.8 6.8a1.1 1.1 0 0 1-1.6 0l-8-8a1.1 1.1 0 0 1-.3-.8z" />
-      <circle cx={7.6} cy={7.6} r={1.4} />
-    </svg>
-  );
 }
 
 function PeopleIcon() {

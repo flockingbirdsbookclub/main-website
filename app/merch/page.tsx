@@ -3,13 +3,14 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { MerchShop, type MerchConfig } from "@/components/content/MerchShop";
 import type { MerchProduct } from "@/components/content/MerchProductCard";
-import { rsvpCtaLabel } from "@/lib/event";
 
 // Real content ported verbatim from merch.html's CONFIG/PRODUCTS block —
 // including the fact that every product's photo is still null and prices
 // are still marked as suggestions, not decisions (see the draft banner
 // below). Becomes a Supabase read in a later phase.
-const eventShortLabel = "3 Oct";
+// Label for the next Social in the shared nav and footer. The merch content
+// below still describes the closed 3 October drop; the page is unlinked.
+const eventShortLabel = "5 Dec";
 
 const config: MerchConfig = {
   whatsapp: "254723906069",
@@ -144,7 +145,7 @@ export default function MerchPage() {
         </div>
       </div>
 
-      <Nav page="merch" rsvpLabel={rsvpCtaLabel(eventShortLabel)} eventShortLabel={eventShortLabel} />
+      <Nav page="merch" eventShortLabel={eventShortLabel} />
 
       <MerchShop products={products} config={config} />
 

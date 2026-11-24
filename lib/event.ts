@@ -1,21 +1,21 @@
-// Single source of truth for event/date formatting. The legacy index.html
-// hardcoded the event date in 6 separate places (nav CTA x2, hero eyebrow,
-// hero stat tile, #social pill/facts, footer link) — every one of those
-// now reads from one EventInfo object via the helpers below, so changing
-// the date (eventually via /admin/event) only ever means editing one field.
+// Single source of truth for the next Social. Every date-dependent spot on the
+// homepage (hero pill, stat tile, Social section, RSVP message, nav and footer
+// link labels) reads from one EventInfo object, so changing the event means
+// editing one object. It becomes the `events` row the admin edits in Phase 7.
 
 export type EventInfo = {
-  eyebrowText: string;
-  shortLabel: string; // e.g. "3 Oct" — nav CTA, hero stat tile
-  pillText: string; // e.g. "Saturday 3 October"
-  heading: string;
-  time: string;
+  heading: string; // "BookClub Social 4.0"
+  edition?: string; // "Surrounded by Idiots edition"
+  tagline?: string; // one line from the poster
+  shortLabel: string; // "5 Dec": nav link, stat tile, footer
+  pillText: string; // "Saturday 5 December"
+  time: string; // "12:00–6:00 PM"
   venueName: string;
-  venueAddress: string;
+  venueAddress?: string;
+  price?: string; // "KES 2,000"
+  priceNote?: string; // "Covers a buffet lunch"
   who: string;
   bring: string;
+  posterSrc?: string;
+  posterAlt?: string;
 };
-
-export function rsvpCtaLabel(shortLabel: string): string {
-  return `RSVP · ${shortLabel}`;
-}

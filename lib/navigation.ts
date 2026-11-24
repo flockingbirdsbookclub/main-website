@@ -1,7 +1,6 @@
-// Single source of truth for the nav/footer link set. The legacy site
-// hand-copied this list three times per page (desktop-left, desktop-right,
-// mobile menu) and again, slightly differently, in the footer — this file
-// is what ends that duplication.
+// Single source of truth for the nav/footer link set. The nav, the mobile
+// menu and the footer Explore column all read these lists, in the order a
+// visitor scrolls past the sections. Change the page order, change it here.
 
 export type NavLink = {
   label: string;
@@ -9,8 +8,7 @@ export type NavLink = {
 };
 
 export const NAV_LINKS: NavLink[] = [
-  { label: "3 Oct Social", hash: "#social" },
-  { label: "Merch", hash: "#merch" },
+  { label: "Social", hash: "#social" },
   { label: "About", hash: "#about" },
   { label: "How it works", hash: "#how" },
   { label: "Reading", hash: "#reading" },
@@ -18,12 +16,11 @@ export const NAV_LINKS: NavLink[] = [
   { label: "Partners", hash: "#partners" },
 ];
 
-export const NAV_LINKS_LEFT = NAV_LINKS.slice(0, 4);
-export const NAV_LINKS_RIGHT = NAV_LINKS.slice(4);
+export const NAV_LINKS_LEFT = NAV_LINKS.slice(0, 3);
+export const NAV_LINKS_RIGHT = NAV_LINKS.slice(3);
 
 export const FOOTER_EXPLORE_LINKS: NavLink[] = [
-  { label: "3 Oct Social", hash: "#social" },
-  { label: "Merch", hash: "#merch" },
+  { label: "Social", hash: "#social" },
   { label: "About", hash: "#about" },
   { label: "How it works", hash: "#how" },
   { label: "What we're reading", hash: "#reading" },
@@ -33,7 +30,6 @@ export const FOOTER_EXPLORE_LINKS: NavLink[] = [
 export const FOOTER_INVOLVED_LINKS: NavLink[] = [
   { label: "Join the flock", hash: "#join" },
   { label: "Partner with us", hash: "#partners" },
-  { label: "Member stories", hash: "#community" },
 ];
 
 type Page = "home" | "merch";

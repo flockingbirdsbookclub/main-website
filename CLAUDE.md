@@ -20,7 +20,7 @@ its phases, is in the commit history (`Phase 1` to `Phase 5`). Supabase and the
 
 ```
 app/layout.tsx           shared <html>, <head>, fonts, default metadata
-app/page.tsx             the landing page. Currently in "event mode" for the 3 October Social
+app/page.tsx             the landing page, with the next Social near the top
 app/merch/page.tsx       print-to-order merch preorder page
 app/not-found.tsx        not-found page
 app/globals.css          the one stylesheet for every page, including the colour tokens
@@ -117,7 +117,7 @@ The vertical logo on its bookmark is the only mark in the nav. It links home.
 
 - **Wide screens (1020px and up):** the bar becomes a three column grid, `1fr auto 1fr`.
   Two equal outer columns put the middle one dead centre, which is where the bookmark
-  hangs. Four links sit left, three links and the RSVP button sit right.
+  hangs. Three links sit left, three links and the "Join the flock" button sit right.
 - **Below 1020px:** it moves to the top left and the links collapse into the menu button.
 - It is `position: absolute`, so it can hang past the bar without making the bar taller.
 - A few lines of JS add `.scrolled` to the header once the page moves. The bar and the
@@ -168,7 +168,10 @@ already in the file. Do not import an icon library.
 The nav, the mobile menu and the footer Explore column list the sections in the order a
 visitor actually scrolls past them:
 
-**3 Oct Social, Merch, About, How it works, Reading, Community, Partners**
+**Social, About, How it works, Reading, Community, Partners**
+
+(The Social link reads as the date, "5 Dec Social", from the `event` object. "Community"
+lands on the champions block, which starts the community stretch.)
 
 The list lives once, in `lib/navigation.ts`, and the nav, menu and footer all read it.
 If you add, remove or move a section, change it there to match the page.
@@ -203,17 +206,33 @@ Sections go green, ivory, green, ivory down the page. Two of the same in a row r
 long section and the boundary between them vanishes. The current order:
 
 ```
-hero          green      about       ivory      community   ivory
-the Social    ivory      pillars     green      partners    green
-merch         green      how         ivory      join        ivory
-              reading    green       shelf      ivory       footer   green
+hero            green      how         ivory      community   ivory
+the Social      ivory      reading     green      partners    green
+about+pillars   green      shelf       ivory      join        ivory
+                                                  footer      green
 ```
 
-Shelf, champions and community run together on purpose. They use `padding-top:0` so they
+Shelf, champions (`#community`) and the gallery run together on purpose. They use `padding-top:0` so they
 read as one long ivory stretch, not three sections.
 
 Before adding a section, check what is above and below it, and give it `.band` if it lands
-on a green beat.
+on a green beat. Removing a section usually breaks the pattern for everything below it.
+When merch came off the homepage, About and the pillars merged into one green band to
+keep the alternation.
+
+Cards inside a `.band` switch to the dark card greens automatically (`.band .card`).
+
+### Buttons
+
+One gold button per section, at most. Across the site the gold button means **join**:
+"Join the flock" in the nav and hero, "Join before the next book" on the current read,
+"Ask to join" in the join section. Attending a Social is always the secondary, outline
+button ("Attend Social 4.0"). "Partner with us" is the one other gold button, alone in the
+partners band.
+
+Every button and link must go somewhere real: an anchor that exists on the page, a page,
+WhatsApp with a message started, or a real external URL. If there is nowhere to send
+people yet, leave the button out rather than linking to `#`.
 
 ### Yes and no lists
 
@@ -330,23 +349,35 @@ gallery and other fixed photos stay in `public/`.
 | RSVP, join and partner WhatsApp number | `lib/whatsapp.ts`, `WHATSAPP_NUMBER` |
 | Join button destination | `app/page.tsx`, `JOIN_URL`. Empty means it opens WhatsApp |
 | Merch product photos | `app/merch/page.tsx`, the `photoSrc` field on each product |
-| Current book and shelf | `app/page.tsx`, `currentBook` and `shelfBooks` |
-| Partners | `app/page.tsx`, `partners` |
-| Event date, time, venue | `app/page.tsx`, the `event` object. Every date on the page reads from it |
+| Current book and shelf, covers and Kibanga links | `app/page.tsx`, `currentBook` and `shelfBooks` |
+| Partners (name, role, card image, link) | `app/page.tsx`, `partners` |
+| Member posts and testimonials | `app/page.tsx`, `posts` and `testimonials`. Empty hides them |
+| Event date, time, venue, price, poster | `app/page.tsx`, the `event` object. Every date on the page reads from it |
+| Last Social recap | `app/page.tsx`, the `.recap` block in the gallery |
 | Event section layout and RSVP form | `components/content/EventBanner.tsx` |
 | Nav, menu and footer links | `lib/navigation.ts` |
 | Colours, spacing, every style | `app/globals.css` |
 
-## Placeholders still in place
+## Content that is not there yet
 
-Unfilled image slots carry a gold **TO DO** tag so they are visible: merch shots, book
-covers, post images, testimonial avatars, partner logos.
-
-`app/merch/page.tsx` has a yellow **DRAFT** banner at the top listing five things it needs before
-the page can be shared. Delete that whole block once they are filled.
+**Empty lists hide their section. Nothing shows a TO DO box on the homepage.** Posts and
+testimonials are empty arrays (`posts`, `testimonials` in `app/page.tsx`), so the "From the
+flock" block does not render. Add a real entry and it appears. The same rule holds for
+partners, and for buy links: a book with no `purchaseUrl` shows no buy link.
 
 **Testimonials are deliberately empty.** Do not write quotes and attribute them to
-members. Real quotes only, collected with permission.
+members. Real quotes only, collected with permission. The same goes for member posts.
+
+**Social payment.** The RSVP note says we reply with how to pay the KES 2,000 by M-Pesa.
+If the club gets a till number, put it in that note in `EventBanner.tsx`.
+
+**Large images get a `-web` copy.** Originals stay as they were uploaded; the page uses a
+copy resized to about 800px tall (`innovation-stack-web.jpg`, `surrounded_by_idiots-web.jpg`,
+`Blue-Ocean-Strategy-web.jpg`, and the partner cards as `.jpg`). Make one with
+`sips --resampleHeight 800 in.jpg --out in-web.jpg`.
+
+`app/merch/page.tsx` has a yellow **DRAFT** banner at the top listing five things it needs before
+the page can be shared. It is not linked from the homepage while there is no drop on.
 
 **The join and partner buttons open WhatsApp.** There is no join form yet. Paste a Google
 Form or Tally URL into `JOIN_URL` in `app/page.tsx` and the button switches to it, changes
@@ -377,15 +408,15 @@ mixing the two makes it impossible to tell what is live.
 
 ---
 
-## After 3 October
+## Changing the event
 
-The site is in event mode and will need unwinding:
+Everything about the next Social is the `event` object at the top of `app/page.tsx`:
+heading, edition, date, time, venue, price, poster. The hero pill, the stat tile, the nav
+and footer link, the Social section and the RSVP WhatsApp message all read from it.
 
-- Delete or rewrite the Social section (`EventBanner` in `app/page.tsx`) as a recap
-- Delete the `<Band id="merch">` section once preorders close
-- Change the nav button from `RSVP · 3 Oct` back to `Join the flock`
-- Replace the `3 Oct / Next Social` stat tile
-- Remove the `#social` and `#merch` entries from `lib/navigation.ts` to match
+To move on to the next Social: upload its poster to `public/images/social/`, update the
+`event` object, and move the last Social into the gallery as a recap row (see the Social
+3.0 row for the pattern). Change the current book in `currentBook` at the same time.
 
 ---
 
