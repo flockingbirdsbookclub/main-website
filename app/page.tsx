@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Band } from "@/components/ui/Band";
@@ -8,6 +9,23 @@ import { EventBanner } from "@/components/content/EventBanner";
 import { BookCard, type Book } from "@/components/content/BookCard";
 import { PartnerCard, type Partner } from "@/components/content/PartnerCard";
 import { rsvpCtaLabel, type EventInfo } from "@/lib/event";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
+
+// Join button. Paste a Google Form or Tally URL into JOIN_URL and the button
+// points there instead. Left empty, it opens WhatsApp with the message started,
+// the same way the RSVP and merch buttons work, so it is never a dead button.
+const JOIN_URL = "";
+const joinHref =
+  JOIN_URL ||
+  buildWhatsAppLink(
+    "FLOCKING BIRDS \u00B7 I would like to join a flock\n\n" +
+      "Name:\nArea of Nairobi:\nWhat I do:\nWhat I am working on right now:",
+  );
+// Partner enquiries are a different conversation to a membership request.
+const partnerHref = buildWhatsAppLink(
+  "FLOCKING BIRDS \u00B7 partnership enquiry\n\n" +
+    "Business:\nWhat we offer:\nWhat we would like to do with the flock:",
+);
 
 // Real content as of this rebuild, ported verbatim from the legacy
 // index.html — including its own still-unfilled placeholders (current
@@ -47,11 +65,41 @@ const partners: Partner[] = [
   { name: "Partner name", description: "Catering", url: null },
 ];
 
+// Homepage-only metadata. Next.js replaces (does not merge) the layout's
+// openGraph block, so the full set is repeated here with the homepage URL.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Flocking Birds Book Club",
+    title: "Flocking Birds Book Club",
+    description:
+      "Flocking Birds is a Nairobi book club and growth community. Over 200 members across 12 flocks read one book every two months, apply it, and grow together.",
+    url: "https://flockingbirdsbookclub.com/",
+    images: ["https://flockingbirdsbookclub.com/share-card.jpg"],
+  },
+};
+
+const organisationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Flocking Birds Book Club",
+  description:
+    "Flocking Birds is a Nairobi book club and growth community. Over 200 members across 12 flocks read one book every two months, apply it, and grow together.",
+  url: "https://flockingbirdsbookclub.com/",
+  foundingDate: "2024",
+  areaServed: "Nairobi, Kenya",
+};
+
 export default function Home() {
   return (
     <>
       <Nav page="home" rsvpLabel={rsvpCtaLabel(event.shortLabel)} eventShortLabel={event.shortLabel} />
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationJsonLd) }}
+      />
       <main id="top">
         {/* ========== HERO ========== */}
         <section className="hero" style={{ paddingBottom: 0 }}>
@@ -88,10 +136,10 @@ export default function Home() {
                 src="/images/hero/collage-1.jpg"
                 ratio="r34"
                 slotLabel=""
-                alt="Flocking Birds members"
+                alt="Two members working through the book together at a Flocking Birds session"
               />
-              <PhotoSlot src="/images/hero/collage-2.jpg" ratio="r1" slotLabel="" alt="Flocking Birds members" />
-              <PhotoSlot src="/images/hero/collage-3.jpg" ratio="r1" slotLabel="" alt="Flocking Birds members" />
+              <PhotoSlot src="/images/hero/collage-2.jpg" ratio="r1" slotLabel="" alt="The flock gathered for the community champions award" />
+              <PhotoSlot src="/images/hero/collage-3.jpg" ratio="r1" slotLabel="" alt="A member at the table during a book review session" />
             </div>
           </div>
           <div className="strip">
@@ -131,7 +179,7 @@ export default function Home() {
               <div>
                 <p className="eyebrow">
                   <TagIcon />
-                  Merch
+                  First drop
                 </p>
                 <h2>Merch, before it exists</h2>
                 <p className="lede" style={{ marginTop: 16 }}>
@@ -199,7 +247,7 @@ export default function Home() {
                 src="/images/about/photo.jpg"
                 ratio="r43"
                 slotLabel=""
-                alt="Flocking Birds community"
+                alt="The three Flocking Birds founders in conversation on a sofa"
               />
             </div>
 
@@ -338,7 +386,13 @@ export default function Home() {
         <Band id="reading">
           <div className="wrap">
             <div className="now">
-              <div className="ph r34 cover" data-slot="COVER · book jacket 3:4" style={{ background: "#235843" }} />
+              <div className="ph r34 cover" data-slot="COVER · book jacket 3:4" style={{ background: "#235843" }}>
+                <img
+                  loading="lazy"
+                  src="/images/books/current-cover.png"
+                  alt="Cover of the book the community is currently reading"
+                />
+              </div>
               <div>
                 <span className="pill">Currently reading</span>
                 <h2 style={{ marginTop: 16 }}>{currentBook.title}</h2>
@@ -439,7 +493,7 @@ export default function Home() {
           <div className="wrap">
             <p className="eyebrow">
               <PostsIcon />
-              Posts
+              From the flock
             </p>
             <h2>What our members are making</h2>
             <p className="lede" style={{ marginTop: 16 }}>
@@ -548,11 +602,11 @@ export default function Home() {
               argument about a chapter.
             </p>
             <div className="gal" style={{ marginTop: 32 }}>
-              <img className="big" src="/images/gallery/photo-big.jpg" alt="" style={{ gridColumn: "span 2", gridRow: "span 2", borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-2.jpg" alt="" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-3.jpg" alt="" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-4.jpg" alt="" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-5.jpg" alt="" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img className="big" src="/images/gallery/photo-big.jpg" alt="Flocking Birds community hangout, July 2026" style={{ gridColumn: "span 2", gridRow: "span 2", borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src="/images/gallery/photo-2.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src="/images/gallery/photo-3.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src="/images/gallery/photo-4.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img src="/images/gallery/photo-5.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
           </div>
         </section>
@@ -576,7 +630,14 @@ export default function Home() {
                   If you run something our community would genuinely benefit from, we would like to
                   hear from you. We are small, specific and growing fast.
                 </p>
-                <a className="btn btn-gold" id="partnerlink" href="#join" style={{ marginTop: 12 }}>
+                <a
+                  className="btn btn-gold"
+                  id="partnerlink"
+                  href={partnerHref}
+                  target="_blank"
+                  rel="noopener"
+                  style={{ marginTop: 12 }}
+                >
                   Partner with us
                 </a>
               </div>
@@ -641,16 +702,24 @@ export default function Home() {
                   <p style={{ maxWidth: "52ch" }}>
                     We ask for your area so we can place you in the flock closest to you.
                   </p>
-                  <a className="btn btn-dark" href="#" id="joinlink" style={{ marginTop: 8 }}>
-                    Ask to join
+                  <a
+                    className="btn btn-dark"
+                    href={joinHref}
+                    id="joinlink"
+                    target="_blank"
+                    rel="noopener"
+                    style={{ marginTop: 8 }}
+                  >
+                    {JOIN_URL ? "Open the join form" : "Ask to join"}
                   </a>
                   <p className="note" id="joinnote">
-                    Opens WhatsApp with your message started. We reply with the flock closest to
-                    you.
+                    {JOIN_URL
+                      ? "Takes about three minutes."
+                      : "Opens WhatsApp with your message started. We reply with the flock closest to you."}
                   </p>
                 </div>
                 <div className="fb-photo">
-                  <img src="/images/join/photo.jpg" alt="" />
+                  <img src="/images/join/photo.jpg" alt="The flock together at a Flocking Birds community hangout" />
                 </div>
               </div>
             </div>
@@ -707,10 +776,8 @@ function iconProps() {
 function TagIcon() {
   return (
     <svg {...iconProps()}>
-      <circle cx={9} cy={8} r={3.2} />
-      <path d="M3.4 19.4a5.8 5.8 0 0 1 11.2 0" />
-      <path d="M16.4 5.3a3.2 3.2 0 0 1 0 5.9" />
-      <path d="M17.6 14.4a5.8 5.8 0 0 1 3 5" />
+      <path d="M3.5 11.4V4.6a1.1 1.1 0 0 1 1.1-1.1h6.8a1.1 1.1 0 0 1 .8.3l8 8a1.1 1.1 0 0 1 0 1.6l-6.8 6.8a1.1 1.1 0 0 1-1.6 0l-8-8a1.1 1.1 0 0 1-.3-.8z" />
+      <circle cx={7.6} cy={7.6} r={1.4} />
     </svg>
   );
 }
@@ -800,9 +867,8 @@ function TrophyIcon() {
 function PostsIcon() {
   return (
     <svg {...iconProps()}>
-      <path d="M13.5 3.5H19a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-5.5" />
-      <path d="M9.5 8.2L13.3 12l-3.8 3.8" />
-      <path d="M13 12H3.5" />
+      <path d="M3.2 6.5h11.6a1.7 1.7 0 0 1 1.7 1.7v5.4a1.7 1.7 0 0 1-1.7 1.7H8.2L4.4 19v-3.7h-1.2a1.7 1.7 0 0 1-1.7-1.7V8.2a1.7 1.7 0 0 1 1.7-1.7z" />
+      <path d="M19 9.4h1.8a1.7 1.7 0 0 1 1.7 1.7v5.4a1.7 1.7 0 0 1-1.7 1.7h-.9v3l-3-3" />
     </svg>
   );
 }

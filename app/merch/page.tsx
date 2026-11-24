@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { MerchShop, type MerchConfig } from "@/components/content/MerchShop";
@@ -103,6 +104,29 @@ const products: MerchProduct[] = [
     partnerStoreUrl: null,
   },
 ];
+
+const merchDescription =
+  "We print to order. Reserve your size with a deposit and collect at the BookClub Social on 3 October.";
+
+export const metadata: Metadata = {
+  title: "Merch Preorder · Flocking Birds Book Club",
+  description: merchDescription,
+  alternates: { canonical: "/merch" },
+  openGraph: {
+    type: "website",
+    siteName: "Flocking Birds Book Club",
+    title: "Merch Preorder · Flocking Birds Book Club",
+    description: merchDescription,
+    url: "https://flockingbirdsbookclub.com/merch",
+    images: ["https://flockingbirdsbookclub.com/share-card.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Merch Preorder · Flocking Birds Book Club",
+    description: merchDescription,
+    images: ["https://flockingbirdsbookclub.com/share-card.jpg"],
+  },
+};
 
 export default function MerchPage() {
   return (

@@ -14,7 +14,7 @@ export function Footer({ page, eventShortLabel }: { page: "home" | "merch"; even
         <div className="cols">
           <div>
             <img className="mark" src="/images/footer/mark.png" alt="Flocking Birds" />
-            <p className="note">You&apos;re not alone here. Welcome to the flock.</p>
+            <p className="note">Different journeys. Common purpose. Stronger together.</p>
           </div>
           <div>
             <h4>Explore</h4>
@@ -34,8 +34,8 @@ export function Footer({ page, eventShortLabel }: { page: "home" | "merch"; even
           </div>
         </div>
         <div className="base">
-          <span>&copy; {year} Flocking Birds Book Club</span>
-          <span>Nairobi, Kenya</span>
+          <span>&copy; {year} Flocking Birds Book Club · Nairobi</span>
+          <span>You&apos;re not alone here. Welcome to the flock.</span>
         </div>
       </div>
     </footer>

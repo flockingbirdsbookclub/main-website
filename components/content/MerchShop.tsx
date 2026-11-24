@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { MerchProductCard, type MerchProduct, type MerchSelection } from "@/components/content/MerchProductCard";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { recordSubmission } from "@/lib/netlifyForms";
 
 export type MerchConfig = {
   whatsapp: string;
@@ -33,6 +34,7 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
   const [order, setOrder] = useState<OrderLine[]>([]);
   const [fields, setFields] = useState({ name: "", phone: "", flock: "", mpesaCode: "" });
   const [flashKey, setFlashKey] = useState<string | null>(null);
+  const [copyLabel, setCopyLabel] = useState("Or copy the order as text");
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { label: closesLabel, daysText } = useMemo(() => closingLabel(config.closesDate), [config.closesDate]);
@@ -65,27 +67,54 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
   }
 
   function summaryText() {
-    const lines = order.map((l) => `${l.qty}× ${l.name} (${l.variant}) — ${money(config.currency, l.qty * l.price)}`);
-    return [
-      "Merch preorder:",
-      ...lines,
-      `Total: ${money(config.currency, total)}`,
-      `Deposit (${config.depositPct}%): ${money(config.currency, deposit)}`,
-      fields.name && `Name: ${fields.name}`,
-      fields.phone && `Phone: ${fields.phone}`,
-      fields.flock && `Flock: ${fields.flock}`,
-      fields.mpesaCode && `M-Pesa code: ${fields.mpesaCode}`,
-    ]
-      .filter(Boolean)
+    const m = (n: number) => money(config.currency, n);
+    const lines = order
+      .map((l) => `\u2022 ${l.qty} \u00D7 ${l.name} (${l.variant}) \u00B7 ${m(l.qty * l.price)}`)
       .join("\n");
+    return (
+      "FLOCKING BIRDS MERCH PREORDER\n\n" +
+      lines +
+      `\n\nItems: ${count}` +
+      `\nTotal: ${m(total)}` +
+      `\nDeposit paid: ${m(deposit)}` +
+      `\nBalance on collection: ${m(total - deposit)}` +
+      `\n\nName: ${fields.name.trim() || "(name not given)"}` +
+      `\nPhone: ${fields.phone.trim() || "(phone not given)"}` +
+      `\nFlock: ${fields.flock || "(flock not given)"}` +
+      `\nM-Pesa code: ${fields.mpesaCode.trim() || "(will send after paying)"}`
+    );
+  }
+
+  // A structured row per order, so the size tally for the printer is one CSV
+  // export rather than sixty WhatsApp messages read by hand. Saved to Netlify
+  // Forms (form "merch-preorder", defined in public/__forms.html).
+  function record() {
+    recordSubmission("merch-preorder", {
+      name: fields.name.trim(),
+      phone: fields.phone.trim(),
+      flock: fields.flock,
+      mpesa_code: fields.mpesaCode.trim(),
+      items: String(count),
+      total: String(total),
+      deposit: String(deposit),
+      order: order.map((l) => `${l.qty} x ${l.name} (${l.variant})`).join(" | "),
+    });
   }
 
   function handleSend() {
-    window.open(buildWhatsAppLink(summaryText(), config.whatsapp), "_blank");
+    record();
+    window.open(buildWhatsAppLink(summaryText(), config.whatsapp), "_blank", "noopener");
   }
 
-  function handleCopy() {
-    navigator.clipboard?.writeText(summaryText());
+  async function handleCopy() {
+    record();
+    try {
+      await navigator.clipboard.writeText(summaryText());
+      setCopyLabel("Copied. Paste it to us on WhatsApp.");
+    } catch {
+      setCopyLabel("Could not copy. Screenshot your order instead.");
+    }
+    window.setTimeout(() => setCopyLabel("Or copy the order as text"), 3000);
   }
 
   return (
@@ -200,7 +229,7 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
                 </div>
                 <div className="fields">
                   <div className="f">
-                    <label htmlFor="o-name">Your name</label>
+                    <label htmlFor="o-name">YOUR NAME</label>
                     <input
                       id="o-name"
                       type="text"
@@ -211,7 +240,7 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
                     />
                   </div>
                   <div className="f">
-                    <label htmlFor="o-phone">Phone number</label>
+                    <label htmlFor="o-phone">PHONE NUMBER</label>
                     <input
                       id="o-phone"
                       type="tel"
@@ -222,7 +251,7 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
                     />
                   </div>
                   <div className="f">
-                    <label htmlFor="o-flock">Your flock</label>
+                    <label htmlFor="o-flock">YOUR FLOCK</label>
                     <select
                       id="o-flock"
                       value={fields.flock}
@@ -236,7 +265,7 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
                     </select>
                   </div>
                   <div className="f">
-                    <label htmlFor="o-code">M-Pesa code</label>
+                    <label htmlFor="o-code">M-PESA CODE</label>
                     <input
                       id="o-code"
                       type="text"
@@ -255,7 +284,7 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
                     before or after sending, just remember to send us the code.
                     <br />
                     <button className="alt" type="button" onClick={handleCopy}>
-                      Or copy the order as text
+                      {copyLabel}
                     </button>
                   </p>
                 </div>

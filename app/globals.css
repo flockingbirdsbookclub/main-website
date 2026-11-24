@@ -77,6 +77,7 @@ header.nav{position:sticky;top:0;z-index:60;background:var(--nest);
 .nav .links a{color:#CFC2AE;text-decoration:none;font-size:.9rem;font-weight:500;
   padding:8px 2px;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
 .nav .links a:hover{color:var(--ivory);border-bottom-color:var(--gold)}
+.nav .links a[aria-current]{color:var(--ivory);border-bottom-color:var(--gold)}
 .nav .right{display:none}
 .nav .cta{display:none}
 .markgap{display:none}
@@ -384,7 +385,12 @@ header.nav,.hero,.band,.champ,footer,header.head,#mobnav,.tex{
    existing tokens above instead of duplicating them (--terra ->
    --terracotta, --deep -> --nest-deep, --stone -> --taupe).
    =========================================================== */
-.merch-page{padding-bottom:88px}
+.merch-page{padding-bottom:88px;font-size:16px;line-height:1.55}
+/* merch.html had its own reset and a narrower column. Restore both inside the
+   merch page only. :where() keeps these weaker than every merch rule below. */
+.merch-page :where(h1,h2,h3,h4,p,ul,ol,li){margin:0}
+.merch-page :where(h1,h2,h3,h4){font-variation-settings:normal}
+.merch-page :where(.wrap){max-width:1120px;padding-left:18px;padding-right:18px}
 
 .draft{background:#F7E7C8;border-bottom:2px solid var(--gold);padding:14px 0}
 .draft .wrap{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
@@ -409,7 +415,7 @@ header.head::after{content:"";position:absolute;right:-110px;top:-150px;width:34
 .how{padding-block:38px 8px}
 .how h2{font-family:var(--disp);font-weight:800;font-size:clamp(20px,3.4vw,25px);color:var(--nest);
   letter-spacing:-.01em}
-.how .lede{color:var(--ink-soft);margin-top:9px;max-width:64ch}
+.how .lede{color:var(--ink-soft);margin-top:9px;max-width:64ch;font-size:inherit;line-height:inherit}
 .msteps{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
   margin-top:22px}
 .mstep{background:var(--paper);border:1px solid var(--rule-soft);border-radius:12px;padding:18px 20px}
@@ -557,3 +563,12 @@ header.head::after{content:"";position:absolute;right:-110px;top:-150px;width:34
 .qa{border-top:1px solid var(--rule-soft);padding-block:15px}
 .qa h3{font-family:var(--disp);font-weight:700;font-size:15.5px;color:var(--nest);margin-bottom:5px}
 .qa p{font-size:14.5px;color:var(--ink-soft);max-width:68ch}
+
+/* Not-found page (app/not-found.tsx), ported from the old 404.html */
+.nf{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background-color:var(--nest);color:var(--ivory);padding:40px 20px;text-align:center}
+.nf-box{max-width:44ch}
+.nf img{width:72px;height:auto;margin:0 auto 26px}
+.nf h1{color:var(--ivory);font-size:clamp(28px,7vw,44px);line-height:1.05}
+.nf p{color:#CFC2AE;margin-top:16px;line-height:1.55;font-size:clamp(15px,2.4vw,17px)}
+.nf .btn{margin-top:28px}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { NAV_LINKS_LEFT, NAV_LINKS_RIGHT, NAV_LINKS, resolveNavHref } from "@/lib/navigation";
 
@@ -30,7 +31,8 @@ export function Nav({
 
   const bookmarkHref = page === "merch" ? "/" : "#top";
   const bookmarkLabel = page === "merch" ? "Back to the homepage" : "Back to the top";
-  const mobileLinks = [...NAV_LINKS, { label: "Join the flock", hash: "#join" as const }];
+  // On merch, the last menu item is "Back to the homepage" (added below), as on the old merch.html.
+  const mobileLinks = page === "merch" ? NAV_LINKS : [...NAV_LINKS, { label: "Join the flock", hash: "#join" as const }];
 
   return (
     <header className={["nav", scrolled ? "scrolled" : ""].filter(Boolean).join(" ")} id="nav">
@@ -87,6 +89,11 @@ export function Nav({
                 </a>
               </li>
             ))}
+            {page === "merch" ? (
+              <li>
+                <Link href="/">Back to the homepage</Link>
+              </li>
+            ) : null}
           </ul>
           <a className="btn btn-gold cta" href={page === "merch" ? "/#social" : "#social"} onClick={() => setOpen(false)}>
             {rsvpLabel}

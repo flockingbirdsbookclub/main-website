@@ -6,9 +6,6 @@ export const metadata: Metadata = {
   description:
     "Flocking Birds is a Nairobi book club and growth community. Over 200 members across 12 flocks read one book every two months, apply it, and grow together.",
   metadataBase: new URL("https://flockingbirdsbookclub.com"),
-  alternates: {
-    canonical: "/",
-  },
   icons: {
     icon: "/favicon.png",
     apple: "/apple-touch-icon.png",
@@ -19,7 +16,6 @@ export const metadata: Metadata = {
     title: "Flocking Birds Book Club",
     description:
       "Flocking Birds is a Nairobi book club and growth community. Over 200 members across 12 flocks read one book every two months, apply it, and grow together.",
-    url: "https://flockingbirdsbookclub.com/",
     images: ["https://flockingbirdsbookclub.com/share-card.jpg"],
   },
   twitter: {
@@ -41,21 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Karla:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "Flocking Birds Book Club",
-              description:
-                "Flocking Birds is a Nairobi book club and growth community. Over 200 members across 12 flocks read one book every two months, apply it, and grow together.",
-              url: "https://flockingbirdsbookclub.com/",
-              foundingDate: "2024",
-              areaServed: "Nairobi, Kenya",
-            }),
-          }}
         />
       </head>
       <body>{children}</body>

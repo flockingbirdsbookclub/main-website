@@ -3,14 +3,13 @@
 import { useRef } from "react";
 import type { EventInfo } from "@/lib/event";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
+import { recordSubmission } from "@/lib/netlifyForms";
 import { PhotoSlot } from "@/components/ui/PhotoSlot";
 import { Button } from "@/components/ui/Button";
 
-// The #social section. Visible RSVP inputs aren't bound to a real <form> —
-// matching the legacy site's pattern, where the actual hidden Netlify
-// <form> only existed so the static host's form-detector could register
-// the field names. The WhatsApp handoff is the real user-facing flow;
-// writing the RSVP to a database happens in the forms-backend phase.
+// The #social section. The visible RSVP inputs aren't bound to a real <form>.
+// Each RSVP is saved to Netlify Forms (form "rsvp", defined in
+// public/__forms.html) and handed off to WhatsApp at the same time.
 export function EventBanner({
   event,
   description,
@@ -26,22 +25,23 @@ export function EventBanner({
   const whoRef = useRef<HTMLSelectElement>(null);
 
   function handleRsvp() {
-    const name = nameRef.current?.value ?? "";
-    const phone = phoneRef.current?.value ?? "";
+    const name = nameRef.current?.value.trim() ?? "";
+    const phone = phoneRef.current?.value.trim() ?? "";
     const heads = headsRef.current?.value ?? "";
     const who = whoRef.current?.value ?? "";
 
-    const message = [
-      `RSVP for ${event.pillText}:`,
-      name && `Name: ${name}`,
-      phone && `Phone: ${phone}`,
-      heads && `Coming with: ${heads}`,
-      who && `Member status: ${who}`,
-    ]
-      .filter(Boolean)
-      .join("\n");
+    // Save a structured copy to Netlify so we get a countable list, not just chats.
+    recordSubmission("rsvp", { name, phone, coming: heads, member: who });
 
-    window.open(buildWhatsAppLink(message), "_blank");
+    const message =
+      `FLOCKING BIRDS \u00B7 RSVP for ${event.heading.replace(/^The /, "the ")}\n` +
+      `${event.pillText}, ${event.time}\n\n` +
+      `Name: ${name || "(not given)"}\n` +
+      `Phone: ${phone || "(not given)"}\n` +
+      `Coming: ${heads}\n` +
+      `Member: ${who}`;
+
+    window.open(buildWhatsAppLink(message), "_blank", "noopener");
   }
 
   return (
@@ -58,7 +58,7 @@ export function EventBanner({
             <li>
               <span className="k">WHEN</span>
               <span className="v">
-                {event.pillText} · {event.time}
+                {event.pillText}, {event.time.replace("–", " to ")}
               </span>
             </li>
             <li>
@@ -81,15 +81,15 @@ export function EventBanner({
             <div className="rsvp-h">RSVP</div>
             <div className="rsvp-f">
               <div className="rf">
-                <label htmlFor="r-name">Your name</label>
+                <label htmlFor="r-name">YOUR NAME</label>
                 <input id="r-name" ref={nameRef} type="text" autoComplete="name" placeholder="First and last name" />
               </div>
               <div className="rf">
-                <label htmlFor="r-phone">Phone</label>
+                <label htmlFor="r-phone">PHONE</label>
                 <input id="r-phone" ref={phoneRef} type="tel" autoComplete="tel" placeholder="07XX XXX XXX" />
               </div>
               <div className="rf">
-                <label htmlFor="r-heads">How many of you</label>
+                <label htmlFor="r-heads">HOW MANY OF YOU</label>
                 <select id="r-heads" ref={headsRef} defaultValue="Just me">
                   <option>Just me</option>
                   <option>Me + 1</option>
@@ -99,7 +99,7 @@ export function EventBanner({
                 </select>
               </div>
               <div className="rf">
-                <label htmlFor="r-who">Are you a member</label>
+                <label htmlFor="r-who">ARE YOU A MEMBER</label>
                 <select id="r-who" ref={whoRef} defaultValue="Yes, I am in a flock">
                   <option>Yes, I am in a flock</option>
                   <option>Not yet, first time</option>
@@ -108,7 +108,7 @@ export function EventBanner({
               </div>
             </div>
             <Button variant="gold" className="rsvp-go" onClick={handleRsvp}>
-              RSVP on WhatsApp
+              Send my RSVP
             </Button>
             <p className="rsvp-note">
               Opens WhatsApp with your RSVP written out. We reply with the venue and a reminder the
@@ -125,7 +125,12 @@ export function EventBanner({
           </div>
         </div>
 
-        <PhotoSlot src={photoSrc} alt="" ratio="r43" slotLabel="Social photo 4:3" />
+        <PhotoSlot
+          src={photoSrc}
+          alt="Members presenting during the July BookClub Social"
+          ratio="r43"
+          slotLabel="Social photo 4:3"
+        />
       </div>
     </section>
   );
