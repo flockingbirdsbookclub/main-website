@@ -9,23 +9,39 @@ It exists so that anyone on the team can make changes without the site drifting.
 
 ## What this is
 
-A two-page static site for a Nairobi book club. Live at **flockingbirdsbookclub.com**,
+A two-page site for a Nairobi book club. Live at **flockingbirdsbookclub.com**,
 hosted on Netlify, deployed automatically from this repository.
 
+It is a **Next.js** app (App Router, TypeScript). It used to be two hand-written HTML
+files with no build step; it was rebuilt so the pages share components and so content
+can later be edited through an admin area instead of in code. The rebuild plan, with
+its phases, is in the commit history (`Phase 1` to `Phase 5`). Supabase and the
+`/admin` screens are not built yet. Until they are, all content is in the page files.
+
 ```
-index.html   the landing page. Currently in "event mode" for the 3 October Social
-merch.html   print-to-order merch preorder page
-404.html     not-found page
-netlify.toml Netlify config: caching, security headers, the /merch short link
+app/layout.tsx           shared <html>, <head>, fonts, default metadata
+app/page.tsx             the landing page, with the next Social near the top
+app/merch/page.tsx       print-to-order merch preorder page
+app/not-found.tsx        not-found page
+app/globals.css          the one stylesheet for every page, including the colour tokens
+components/ui/           Button, Band, Card, PhotoSlot, TicksList
+components/layout/       Nav, Footer (one of each, used on both pages)
+components/content/      EventBanner (the Social + RSVP), BookCard, PartnerCard,
+                         MerchShop, MerchProductCard
+lib/                     navigation links, event helpers, WhatsApp links, Netlify Forms
+public/                  images, favicons, and __forms.html (see Do not touch)
+netlify.toml             Netlify config: build command, security headers, caching
+next.config.ts           Next.js config, including redirects for the old .html addresses
+index.html, merch.html,  the old static site. No longer served. Kept for reference
+404.html                 until the rebuild is live, then delete them
 ```
 
-No build step. No framework. No npm. Everything each page needs lives inside its own
-HTML file, including the images as base64. Open `index.html` in a browser and you see
-exactly what is live.
+To see it locally: `npm install` once, then `npm run dev` and open http://localhost:3000.
+`npm run build` must pass before anything is pushed; Netlify runs the same command.
 
-**Do not introduce a build system, a framework, a CSS library, or a package manager.**
-Three non-technical people maintain this. The moment it needs compiling, it stops being
-maintainable by them. This constraint is deliberate, not an oversight.
+**Do not add a CSS library, a UI kit, an icon library or a second framework.** The
+stylesheet is plain CSS on purpose, so the tokens below stay the only source of colour.
+New UI is a component in `components/` built from what is already there.
 
 ---
 
@@ -75,8 +91,9 @@ Do not invent new greens. These are the whole set:
 
 ### The plaster texture
 
-Both pages carry a plaster wash. It is one greyscale image stored twice as a CSS
-variable, `--tex` at full strength and `--tex-soft` at 15 per cent.
+Both pages carry a plaster wash. It is one greyscale image stored twice, as
+`public/images/texture/tex.webp` at full strength and `tex-soft.webp` at 15 per cent.
+`app/globals.css` points the CSS variables `--tex` and `--tex-soft` at them.
 
 It works by `background-blend-mode: multiply`. The image sits in the element's own
 background layer and is multiplied into the colour underneath it, so it can never
@@ -100,7 +117,7 @@ The vertical logo on its bookmark is the only mark in the nav. It links home.
 
 - **Wide screens (1020px and up):** the bar becomes a three column grid, `1fr auto 1fr`.
   Two equal outer columns put the middle one dead centre, which is where the bookmark
-  hangs. Four links sit left, three links and the RSVP button sit right.
+  hangs. Three links sit left, three links and the "Join the flock" button sit right.
 - **Below 1020px:** it moves to the top left and the links collapse into the menu button.
 - It is `position: absolute`, so it can hang past the bar without making the bar taller.
 - A few lines of JS add `.scrolled` to the header once the page moves. The bar and the
@@ -109,10 +126,10 @@ The vertical logo on its bookmark is the only mark in the nav. It links home.
   mark looks stranded. Remove the class entirely and the bookmark sits on top of the page
   as you scroll.
 
-Both pages carry the same nav. On `merch.html` it is called `.topnav` / `.topbar`, because
-`.bar` on that page is already the fixed order bar at the bottom. Its page header is
-`header.head`, not bare `header`, because the nav is a `<header>` too and the bare
-selector would clip the bookmark.
+Both pages use the same `components/layout/Nav.tsx`. On the merch page the bookmark links
+to the homepage instead of the top, and the menu ends with "Back to the homepage". The
+merch page header is `header.head`, not bare `header`, because the nav is a `<header>` too
+and the bare selector would clip the bookmark.
 
 The bookmark is terracotta, not gold. Ivory on terracotta measures 3.05:1, which is fine
 for a logotype (WCAG exempts them) but is **not** a pairing to reuse for real text.
@@ -151,9 +168,13 @@ already in the file. Do not import an icon library.
 The nav, the mobile menu and the footer Explore column list the sections in the order a
 visitor actually scrolls past them:
 
-**3 Oct Social, Merch, About, How it works, Reading, Community, Partners**
+**Social, About, How it works, Reading, Community, Partners**
 
-If you add, remove or move a section, move its link in all three places to match.
+(The Social link reads as the date, "5 Dec Social", from the `event` object. "Community"
+lands on the champions block, which starts the community stretch.)
+
+The list lives once, in `lib/navigation.ts`, and the nav, menu and footer all read it.
+If you add, remove or move a section, change it there to match the page.
 A nav in a different order to the page makes scrolling feel broken even when every
 link works.
 
@@ -185,17 +206,34 @@ Sections go green, ivory, green, ivory down the page. Two of the same in a row r
 long section and the boundary between them vanishes. The current order:
 
 ```
-hero          green      about       ivory      community   ivory
-the Social    ivory      pillars     green      partners    green
-merch         green      how         ivory      join        ivory
-              reading    green       shelf      ivory       footer   green
+hero            green      how         ivory      community   ivory
+the Social      ivory      reading     green      partners    green
+about+pillars   green      shelf       ivory      join        ivory
+                                                  footer      green
 ```
 
-Shelf, champions and community run together on purpose. They use `padding-top:0` so they
+Shelf, champions (`#community`) and the gallery run together on purpose. They use `padding-top:0` so they
 read as one long ivory stretch, not three sections.
 
 Before adding a section, check what is above and below it, and give it `.band` if it lands
-on a green beat.
+on a green beat. Removing a section usually breaks the pattern for everything below it.
+When merch came off the homepage, About and the pillars merged into one green band to
+keep the alternation.
+
+Cards inside a `.band` switch to the dark card greens automatically (`.band .card`).
+
+### Buttons
+
+One gold button per section, at most. Across the site the gold button means **join**:
+"Join the flock" in the nav and hero, "Join before the next book" on the current read,
+"Join the flock" again in the join section. All of them go to the Google Form in
+`lib/join.ts`, in a new tab. Attending a Social is always the secondary, outline
+button ("RSVP for Social 4.0"), named for what it does. "Partner with us" is the one other gold button, alone in the
+partners band.
+
+Every button and link must go somewhere real: an anchor that exists on the page, a page,
+WhatsApp with a message started, or a real external URL. If there is nowhere to send
+people yet, leave the button out rather than linking to `#`.
 
 ### Yes and no lists
 
@@ -272,30 +310,34 @@ How the site talks:
 
 ## Do not touch
 
-**The hidden forms.** Both pages contain a `<form data-netlify="true" hidden>` near the
-bottom. Netlify reads these at deploy time to know what fields to capture. Delete them
-and RSVPs and merch orders stop being recorded. They look like dead code. They are not.
+**`public/__forms.html`.** It holds two hidden forms, `rsvp` and `merch-preorder`. Netlify
+reads them at deploy time to know what fields to capture. Nobody visits the file. Delete
+it and RSVPs and merch orders stop being recorded. It looks like dead code. It is not.
+If you add a field to the RSVP or the order form, add it here too.
 
-**`netlify.toml`.** Sets caching, security headers, and the `/merch` short link.
+**`lib/netlifyForms.ts`** and the calls to `recordSubmission()` in `EventBanner.tsx` and
+`MerchShop.tsx`. These POST each submission to `/__forms.html`, which is what puts it in
+the Netlify Forms tab. With Next.js on Netlify they must POST to that static file, not
+to `/`. The WhatsApp handoff runs alongside them, not instead of them.
 
-**`--tex` and `--tex-soft`.** Two long base64 strings near the top of each file. They are
-the plaster wash. They look like garbage. Deleting them flattens both pages.
+**`netlify.toml`.** Sets the build command, the Next.js plugin, security headers and
+caching. Redirects for the old `.html` addresses live in `next.config.ts`; links already
+shared on WhatsApp point at `/merch.html`, so keep them.
 
-**The `record()` function in `merch.html`** and the `fetch('/')` block in `index.html`.
-These POST each submission to Netlify Forms. The WhatsApp handoff runs alongside them,
-not instead of them.
+**`--tex` and `--tex-soft`** and the two files in `public/images/texture/`. Deleting them
+flattens both pages.
 
-**The `<head>`.** Both pages open with `<!doctype html>`, `<html lang="en">` and a full
-head: charset, viewport, description, theme colour, the Open Graph and Twitter tags, the
-canonical URL, the favicon links and the fonts. `index.html` also carries a JSON-LD
-Organization block. None of it is visible on the page, which is exactly why it goes
-missing. Without the doctype the browser drops into quirks mode and the layout breaks.
-Without the viewport tag the phone layout breaks. Without the Open Graph tags a shared
-link has no title or description.
+**The metadata.** `app/layout.tsx` sets the shared `<head>`: language, theme colour,
+favicons, fonts, and default description and share tags. Each page then sets its own
+`metadata`: title, canonical URL and Open Graph tags. Next.js **replaces** the layout's
+`openGraph` block rather than merging it, so a page that sets `openGraph` must set all of
+it (title, description, url, image), not just the URL. `app/page.tsx` also carries the
+JSON-LD Organization block. None of it is visible on the page, which is exactly why it
+goes missing. Without the Open Graph tags a shared link has no title or description.
 
-Nothing on either page references an image file. Every image, including the texture and
-the bookmark, is a base64 string inside the HTML. The only files the pages ask the server
-for are `favicon.png`, `apple-touch-icon.png` and `share-card.jpg`.
+Images are files in `public/images/`, not base64. Book covers, partner logos and merch
+photos will move to Supabase Storage when the admin is built. The texture, nav mark,
+gallery and other fixed photos stay in `public/`.
 
 ---
 
@@ -303,47 +345,62 @@ for are `favicon.png`, `apple-touch-icon.png` and `share-card.jpg`.
 
 | To change | Go to |
 |---|---|
-| Merch products, prices, colours, sizes | `merch.html`, the `PRODUCTS` array |
-| Preorder deadline, deposit %, WhatsApp number | `merch.html`, the `CONFIG` object above it |
-| RSVP WhatsApp number | `index.html`, search `var WA` |
-| Join button destination | `index.html`, search `JOIN_URL`. Empty means it opens WhatsApp |
-| Merch product photos | `merch.html`, the `photo` field on each product. Feeds the cards and the order thumbnails |
-| Current book and dates | `index.html`, search `Currently reading` |
-| Event details | `index.html`, the `<section id="social">` block |
+| Merch products, prices, colours, sizes | `app/merch/page.tsx`, the `products` array |
+| Preorder deadline, deposit %, WhatsApp number for orders | `app/merch/page.tsx`, the `config` object |
+| RSVP and partner WhatsApp number | `lib/whatsapp.ts`, `WHATSAPP_NUMBER` |
+| Join form link (every "Join the flock" button) | `lib/join.ts`, `JOIN_URL` |
+| Merch product photos | `app/merch/page.tsx`, the `photoSrc` field on each product |
+| Current book and shelf, covers and Kibanga links | `app/page.tsx`, `currentBook` and `shelfBooks` |
+| Partners (name, role, card image, link) | `app/page.tsx`, `partners` |
+| Member posts and testimonials | `app/page.tsx`, `posts` and `testimonials`. Empty hides them |
+| Event date, time, venue, price, poster | `app/page.tsx`, the `event` object. Every date on the page reads from it |
+| Last Social recap | `app/page.tsx`, the `.recap` block in the gallery |
+| Event section layout and RSVP form | `components/content/EventBanner.tsx` |
+| Nav, menu and footer links | `lib/navigation.ts` |
+| Colours, spacing, every style | `app/globals.css` |
 
----
+## Content that is not there yet
 
-## Placeholders still in place
-
-Unfilled image slots carry a gold **TO DO** tag so they are visible: merch shots, book
-covers, post images, testimonial avatars, partner logos.
-
-`merch.html` has a yellow **DRAFT** banner at the top listing five things it needs before
-the page can be shared. Delete that whole block once they are filled.
+**Empty lists hide their section. Nothing shows a TO DO box on the homepage.** Posts and
+testimonials are empty arrays (`posts`, `testimonials` in `app/page.tsx`), so the "From the
+flock" block does not render. Add a real entry and it appears. The same rule holds for
+partners, and for buy links: a book with no `purchaseUrl` shows no buy link.
 
 **Testimonials are deliberately empty.** Do not write quotes and attribute them to
-members. Real quotes only, collected with permission.
+members. Real quotes only, collected with permission. The same goes for member posts.
 
-**The join and partner buttons open WhatsApp.** There is no join form yet. Paste a Google
-Form or Tally URL into `JOIN_URL` in `index.html` and the button switches to it, changes
-its own label, and the WhatsApp fallback stops being used. Until then nobody hits a dead
-button.
+**Social payment.** The RSVP note says we reply with how to pay the KES 2,000 by M-Pesa.
+If the club gets a till number, put it in that note in `EventBanner.tsx`.
+
+**Large images get a `-web` copy.** Originals stay as they were uploaded; the page uses a
+copy resized to about 800px tall (`innovation-stack-web.jpg`, `surrounded_by_idiots-web.jpg`,
+`Blue-Ocean-Strategy-web.jpg`, and the partner cards as `.jpg`). Make one with
+`sips --resampleHeight 800 in.jpg --out in-web.jpg`.
+
+`app/merch/page.tsx` has a yellow **DRAFT** banner at the top listing five things it needs before
+the page can be shared. It is not linked from the homepage while there is no drop on.
+
+**Join goes to the Google Form; RSVP and partners go to WhatsApp.** Every "Join the flock"
+button reads `JOIN_URL` in `lib/join.ts`. The Social RSVP and "Partner with us" open WhatsApp
+with the message started, using `WHATSAPP_NUMBER` in `lib/whatsapp.ts`.
 
 **The order summary shows a thumbnail per line.** It uses each product's `photo`, and falls
 back to a tile with the product kind while photos are still missing. Clicking a thumbnail or
 a product name scrolls back to that card and flashes it, and "Add something else" returns to
-the shop. Fill in `photo` and all of that starts showing real product shots.
+the shop. Fill in `photoSrc` and all of that starts showing real product shots.
 
 **`share-card.jpg` does not exist yet.** Both pages point their Open Graph tags at it.
-Until a real 1200x630 image sits in the repo root, links shared on WhatsApp or LinkedIn
+Until a real 1200x630 image sits in `public/`, links shared on WhatsApp or LinkedIn
 show a title and description but no picture.
 
 ---
 
 ## Deploying
 
-Netlify builds from this repository. Push a change, or edit a file on github.com and
-commit, and the site updates in about a minute. Every deploy is kept, so a bad change can
+Netlify builds from this repository: it runs `npm run build` and publishes the result.
+Push a change, or edit a file on github.com and commit, and the site updates in a couple
+of minutes. If the build fails, the live site stays on the last good version and the
+error is in the Netlify Deploys tab. Every deploy is kept, so a bad change can
 be rolled back from the Netlify Deploys tab.
 
 Do not drag folders onto Netlify any more. The repository is the source of truth now, and
@@ -351,14 +408,15 @@ mixing the two makes it impossible to tell what is live.
 
 ---
 
-## After 3 October
+## Changing the event
 
-The site is in event mode and will need unwinding:
+Everything about the next Social is the `event` object at the top of `app/page.tsx`:
+heading, edition, date, time, venue, price, poster. The hero pill, the stat tile, the nav
+and footer link, the Social section and the RSVP WhatsApp message all read from it.
 
-- Delete or rewrite `<section class="band" id="social">` as a recap
-- Delete `<section id="merch">` once preorders close
-- Change the nav button from `RSVP · 3 Oct` back to `Join the flock`
-- Replace the `3 Oct / Next Social` stat tile
+To move on to the next Social: upload its poster to `public/images/social/`, update the
+`event` object, and move the last Social into the gallery as a recap row (see the Social
+3.0 row for the pattern). Change the current book in `currentBook` at the same time.
 
 ---
 

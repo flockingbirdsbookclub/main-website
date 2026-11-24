@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Forms</title><meta name="robots" content="noindex"></head>
+<body>
+<!--
+  Netlify reads this file at deploy time to learn which fields each form captures.
+  Nobody visits it. The RSVP button and the merch order button POST here in the
+  background, which is what puts each submission in the Netlify Forms tab.
+  It looks like dead code. It is not. Do not delete it, and if you add a field to
+  either form on the site, add it here too.
+-->
+<form name="rsvp" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name"><input type="tel" name="phone">
+  <input type="text" name="coming"><input type="text" name="member">
+  <input type="text" name="bot-field">
+</form>
+
+<form name="merch-preorder" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name"><input type="tel" name="phone">
+  <input type="text" name="flock"><input type="text" name="mpesa_code">
+  <input type="text" name="items"><input type="text" name="total">
+  <input type="text" name="deposit"><textarea name="order"></textarea>
+  <input type="text" name="bot-field">
+</form>
+</body>
+</html>

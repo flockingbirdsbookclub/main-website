@@ -1,8 +1,13 @@
 # Netlify configuration for flockingbirdsbookclub.com
+# Next.js app, built via the official Netlify Next Runtime plugin.
 # Nothing here needs changing day to day. Netlify reads this file on every deploy.
 
 [build]
-  publish = "."
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 # Sensible security headers. None of these change how the site looks.
 [[headers]]
@@ -13,22 +18,13 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
 
-# The pages carry their own images inside them, so they must revalidate on every
-# visit. Otherwise a member could see yesterday's merch deadline.
+# Icons and migrated images never change, so let browsers hold onto them for a year.
 [[headers]]
-  for = "/*.html"
+  for = "/images/*"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=31536000, immutable"
 
-# Icons never change, so let browsers hold onto them for a year.
 [[headers]]
   for = "/*.png"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-# Friendly short link for the merch page: flockingbirdsbookclub.com/merch
-[[redirects]]
-  from = "/merch"
-  to = "/merch.html"
-  status = 301
-  force = true
