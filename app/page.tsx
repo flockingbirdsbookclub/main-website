@@ -189,7 +189,7 @@ export default function Home() {
                   Join the flock
                 </a>
                 <a className="btn btn-out" href="#social">
-                  Attend Social 4.0
+                  RSVP for Social 4.0
                 </a>
               </div>
             </div>
@@ -682,10 +682,10 @@ export default function Home() {
                     rel="noopener noreferrer"
                     style={{ marginTop: 8 }}
                   >
-                    Open the join form
+                    Join the flock
                   </a>
                   <p className="note" id="joinnote">
-                    Takes about three minutes. Opens in a new tab.
+                    Opens the join form in a new tab.
                   </p>
                 </div>
                 <div className="fb-photo">

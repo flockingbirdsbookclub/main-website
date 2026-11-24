@@ -226,9 +226,9 @@ Cards inside a `.band` switch to the dark card greens automatically (`.band .car
 
 One gold button per section, at most. Across the site the gold button means **join**:
 "Join the flock" in the nav and hero, "Join before the next book" on the current read,
-"Open the join form" in the join section. All of them go to the Google Form in
+"Join the flock" again in the join section. All of them go to the Google Form in
 `lib/join.ts`, in a new tab. Attending a Social is always the secondary, outline
-button ("Attend Social 4.0"). "Partner with us" is the one other gold button, alone in the
+button ("RSVP for Social 4.0"), named for what it does. "Partner with us" is the one other gold button, alone in the
 partners band.
 
 Every button and link must go somewhere real: an anchor that exists on the page, a page,

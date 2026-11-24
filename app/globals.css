@@ -39,7 +39,12 @@ h3{font-size:clamp(1.15rem,2.6vw,1.4rem);font-weight:700;letter-spacing:-.012em;
 h4{font-size:1rem;font-weight:700;letter-spacing:-.004em;line-height:1.25}
 p{margin:0 0 1em}
 a{color:var(--teal)}
-:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+/* Focus ring: nest green on the ivory ground, gold on the greens, so it always
+   stands out from what is behind it (gold on ivory is only about 1.9:1). */
+:focus-visible{outline:3px solid var(--nest);outline-offset:3px;border-radius:4px}
+.band :focus-visible,.hero :focus-visible,header.nav :focus-visible,#mobnav :focus-visible,
+footer :focus-visible{outline-color:var(--gold)}
+.champ :focus-visible{outline-color:#FFF}
 .wrap{max-width:var(--w);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
 section{padding:clamp(56px,9vw,104px) 0}
 section[id],main[id]{scroll-margin-top:78px}
