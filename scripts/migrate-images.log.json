@@ -1,0 +1,290 @@
+[
+  {
+    "file": "index.html",
+    "line": 64,
+    "mime": "webp",
+    "bytes": 44282,
+    "hash": "d71407bd8afd",
+    "slug": "texture/tex",
+    "outPath": "public/images/texture/tex.webp"
+  },
+  {
+    "file": "index.html",
+    "line": 65,
+    "mime": "webp",
+    "bytes": 4402,
+    "hash": "cb6b31047c72",
+    "slug": "texture/tex-soft",
+    "outPath": "public/images/texture/tex-soft.webp"
+  },
+  {
+    "file": "index.html",
+    "line": 459,
+    "mime": "webp",
+    "bytes": 15980,
+    "hash": "f61d9453ee13",
+    "slug": "nav/bookmark",
+    "outPath": "public/images/nav/bookmark.webp"
+  },
+  {
+    "file": "index.html",
+    "line": 518,
+    "mime": "jpeg",
+    "bytes": 83166,
+    "hash": "5a6cce699f6d",
+    "slug": "hero/collage-1",
+    "outPath": "public/images/hero/collage-1.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 521,
+    "mime": "jpeg",
+    "bytes": 40510,
+    "hash": "409202aaf55b",
+    "slug": "hero/collage-2",
+    "outPath": "public/images/hero/collage-2.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 524,
+    "mime": "jpeg",
+    "bytes": 35346,
+    "hash": "2e9ab4226761",
+    "slug": "hero/collage-3",
+    "outPath": "public/images/hero/collage-3.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 586,
+    "mime": "jpeg",
+    "bytes": 116144,
+    "hash": "97347754dcba",
+    "slug": "social/photo",
+    "outPath": "public/images/social/photo.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 637,
+    "mime": "jpeg",
+    "bytes": 59831,
+    "hash": "7decce852936",
+    "slug": "about/photo",
+    "outPath": "public/images/about/photo.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 711,
+    "mime": "jpeg",
+    "bytes": 175020,
+    "hash": "98fc3eb2a27c",
+    "slug": "how/room",
+    "outPath": "public/images/how/room.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 723,
+    "mime": "png",
+    "bytes": 6225,
+    "hash": "ac5e49889b44",
+    "slug": "books/current-cover",
+    "outPath": "public/images/books/current-cover.png"
+  },
+  {
+    "file": "index.html",
+    "line": 751,
+    "mime": "png",
+    "bytes": 6224,
+    "hash": "e0aa9cdf2e61",
+    "slug": "books/shelf-placeholder",
+    "outPath": "public/images/books/shelf-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 753,
+    "mime": "png",
+    "bytes": 6224,
+    "hash": "e0aa9cdf2e61",
+    "slug": "books/shelf-placeholder",
+    "outPath": "public/images/books/shelf-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 755,
+    "mime": "png",
+    "bytes": 6224,
+    "hash": "e0aa9cdf2e61",
+    "slug": "books/shelf-placeholder",
+    "outPath": "public/images/books/shelf-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 757,
+    "mime": "png",
+    "bytes": 6224,
+    "hash": "e0aa9cdf2e61",
+    "slug": "books/shelf-placeholder",
+    "outPath": "public/images/books/shelf-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 759,
+    "mime": "png",
+    "bytes": 6224,
+    "hash": "e0aa9cdf2e61",
+    "slug": "books/shelf-placeholder",
+    "outPath": "public/images/books/shelf-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 780,
+    "mime": "jpeg",
+    "bytes": 48203,
+    "hash": "2b7ea73b26a7",
+    "slug": "champions/trophy",
+    "outPath": "public/images/champions/trophy.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 800,
+    "mime": "png",
+    "bytes": 6649,
+    "hash": "17974c424182",
+    "slug": "community/post-placeholder",
+    "outPath": "public/images/community/post-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 809,
+    "mime": "png",
+    "bytes": 6649,
+    "hash": "17974c424182",
+    "slug": "community/post-placeholder",
+    "outPath": "public/images/community/post-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 818,
+    "mime": "png",
+    "bytes": 6649,
+    "hash": "17974c424182",
+    "slug": "community/post-placeholder",
+    "outPath": "public/images/community/post-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 832,
+    "mime": "png",
+    "bytes": 6669,
+    "hash": "300789ef40ab",
+    "slug": "community/avatar-placeholder",
+    "outPath": "public/images/community/avatar-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 837,
+    "mime": "png",
+    "bytes": 6669,
+    "hash": "300789ef40ab",
+    "slug": "community/avatar-placeholder",
+    "outPath": "public/images/community/avatar-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 842,
+    "mime": "png",
+    "bytes": 6669,
+    "hash": "300789ef40ab",
+    "slug": "community/avatar-placeholder",
+    "outPath": "public/images/community/avatar-placeholder.png"
+  },
+  {
+    "file": "index.html",
+    "line": 856,
+    "mime": "jpeg",
+    "bytes": 59761,
+    "hash": "92c6952b7b9a",
+    "slug": "gallery/photo-big",
+    "outPath": "public/images/gallery/photo-big.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 857,
+    "mime": "jpeg",
+    "bytes": 28647,
+    "hash": "cd3ed244c12b",
+    "slug": "gallery/photo-2",
+    "outPath": "public/images/gallery/photo-2.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 858,
+    "mime": "jpeg",
+    "bytes": 28852,
+    "hash": "e0fca87df23e",
+    "slug": "gallery/photo-3",
+    "outPath": "public/images/gallery/photo-3.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 859,
+    "mime": "jpeg",
+    "bytes": 56272,
+    "hash": "27c235afc705",
+    "slug": "gallery/photo-4",
+    "outPath": "public/images/gallery/photo-4.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 860,
+    "mime": "jpeg",
+    "bytes": 27470,
+    "hash": "70e5d2763473",
+    "slug": "gallery/photo-5",
+    "outPath": "public/images/gallery/photo-5.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 925,
+    "mime": "jpeg",
+    "bytes": 57789,
+    "hash": "f672646346fc",
+    "slug": "join/photo",
+    "outPath": "public/images/join/photo.jpg"
+  },
+  {
+    "file": "index.html",
+    "line": 974,
+    "mime": "png",
+    "bytes": 59257,
+    "hash": "fc724219f765",
+    "slug": "footer/mark",
+    "outPath": "public/images/footer/mark.png"
+  },
+  {
+    "file": "merch.html",
+    "line": 37,
+    "mime": "webp",
+    "bytes": 44282,
+    "hash": "d71407bd8afd",
+    "slug": "texture/tex",
+    "outPath": "public/images/texture/tex.webp"
+  },
+  {
+    "file": "merch.html",
+    "line": 38,
+    "mime": "webp",
+    "bytes": 4402,
+    "hash": "cb6b31047c72",
+    "slug": "texture/tex-soft",
+    "outPath": "public/images/texture/tex-soft.webp"
+  },
+  {
+    "file": "merch.html",
+    "line": 308,
+    "mime": "webp",
+    "bytes": 15980,
+    "hash": "f61d9453ee13",
+    "slug": "nav/bookmark",
+    "outPath": "public/images/nav/bookmark.webp"
+  }
+]
