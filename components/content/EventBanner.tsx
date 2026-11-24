@@ -59,18 +59,18 @@ export function EventBanner({ event, description }: { event: EventInfo; descript
 
           <ul className="facts">
             <li>
-              <span className="k">WHEN</span>
+              <span className="k">When</span>
               <span className="v">
                 {event.pillText}, {event.time.replace("–", " to ")}
               </span>
             </li>
             <li>
-              <span className="k">WHERE</span>
+              <span className="k">Where</span>
               <span className="v">{where}</span>
             </li>
             {event.price ? (
               <li>
-                <span className="k">COST</span>
+                <span className="k">Cost</span>
                 <span className="v">
                   <b className="price">{event.price}</b>
                   {event.priceNote ? ` · ${event.priceNote}` : null}
@@ -78,28 +78,28 @@ export function EventBanner({ event, description }: { event: EventInfo; descript
               </li>
             ) : null}
             <li>
-              <span className="k">WHO</span>
+              <span className="k">Who</span>
               <span className="v">{event.who}</span>
             </li>
             <li>
-              <span className="k">BRING</span>
+              <span className="k">Bring</span>
               <span className="v">{event.bring}</span>
             </li>
           </ul>
 
           <div className="rsvp">
-            <div className="rsvp-h">RSVP</div>
+            <div className="rsvp-h">RSVP for {event.heading}</div>
             <div className="rsvp-f">
               <div className="rf">
-                <label htmlFor="r-name">YOUR NAME</label>
+                <label htmlFor="r-name">Your name</label>
                 <input id="r-name" ref={nameRef} type="text" autoComplete="name" placeholder="First and last name" />
               </div>
               <div className="rf">
-                <label htmlFor="r-phone">PHONE</label>
+                <label htmlFor="r-phone">Phone</label>
                 <input id="r-phone" ref={phoneRef} type="tel" autoComplete="tel" placeholder="07XX XXX XXX" />
               </div>
               <div className="rf">
-                <label htmlFor="r-heads">HOW MANY OF YOU</label>
+                <label htmlFor="r-heads">How many of you</label>
                 <select id="r-heads" ref={headsRef} defaultValue="Just me">
                   <option>Just me</option>
                   <option>Me + 1</option>
@@ -109,7 +109,7 @@ export function EventBanner({ event, description }: { event: EventInfo; descript
                 </select>
               </div>
               <div className="rf">
-                <label htmlFor="r-who">ARE YOU A MEMBER</label>
+                <label htmlFor="r-who">Are you a member</label>
                 <select id="r-who" ref={whoRef} defaultValue="Yes, I am in a flock">
                   <option>Yes, I am in a flock</option>
                   <option>Not yet, first time</option>

@@ -171,12 +171,9 @@ export default function Home() {
           <div className="wrap grid">
             <div style={{ paddingBottom: "clamp(30px,5vw,56px)" }}>
               <a className="evt" href="#social">
-                <span className="evt-tag">NEXT SOCIAL</span>
+                <span className="evt-tag">Next Social</span>
                 <span className="evt-txt">
-                  {event.heading} · {event.pillText} · open to everyone
-                </span>
-                <span className="evt-go" aria-hidden="true">
-                  →
+                  {event.heading}, {event.pillText}. Open to everyone.
                 </span>
               </a>
               <h1>
@@ -195,7 +192,6 @@ export default function Home() {
                   Attend Social 4.0
                 </a>
               </div>
-              <p className="note">200+ members · 12 flocks across Nairobi · new members welcome any cycle</p>
             </div>
             <div className="collage">
               <PhotoSlot
@@ -310,7 +306,7 @@ export default function Home() {
             <CardGrid columns={3} className="pillars-cards">
               <Card style={{ background: "#1C5340", borderColor: "#31624D" }}>
                 <span className="num" style={{ color: "var(--gold)" }}>
-                  01 · Challenge
+                  Challenge
                 </span>
                 <h4 style={{ color: "var(--ivory)" }}>We do hard things</h4>
                 <p style={{ color: "#CFC2AE", marginTop: 8 }}>
@@ -320,7 +316,7 @@ export default function Home() {
               </Card>
               <Card style={{ background: "#1C5340", borderColor: "#31624D" }}>
                 <span className="num" style={{ color: "var(--gold)" }}>
-                  02 · Accountability
+                  Accountability
                 </span>
                 <h4 style={{ color: "var(--ivory)" }}>We are doers</h4>
                 <p style={{ color: "#CFC2AE", marginTop: 8 }}>
@@ -330,7 +326,7 @@ export default function Home() {
               </Card>
               <Card style={{ background: "#1C5340", borderColor: "#31624D" }}>
                 <span className="num" style={{ color: "var(--gold)" }}>
-                  03 · Christ &amp; Community
+                  Christ &amp; Community
                 </span>
                 <h4 style={{ color: "var(--ivory)" }}>We do life together, and with God</h4>
                 <p style={{ color: "#CFC2AE", marginTop: 8 }}>
@@ -399,7 +395,7 @@ export default function Home() {
                 src="/images/how/room.jpg"
                 alt="The room during the July community hangout"
               />
-              <p className="note">Two months a book · six books a year · the flock picks what comes next.</p>
+              <p className="note">Two months a book, six books a year, and the flock picks what comes next.</p>
             </div>
           </div>
         </section>
@@ -579,7 +575,7 @@ export default function Home() {
             </div>
             <div className="recap">
               <div className="recap-txt">
-                <span className="pill">Social 3.0 · 3 October</span>
+                <span className="pill">Social 3.0, 3 October</span>
                 <h3>The art of communication</h3>
                 <p>
                   Our guest speaker, Kalekye Mumo, communications coach with Own Your Mic Programs
