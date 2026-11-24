@@ -1,4 +1,5 @@
 import { FOOTER_EXPLORE_LINKS, FOOTER_INVOLVED_LINKS, resolveNavHref } from "@/lib/navigation";
+import { JOIN_URL } from "@/lib/join";
 
 // One footer, used on both the home and merch pages. The legacy merch.html
 // shipped a much sparser footer (two spans, no nav) than index.html's
@@ -26,6 +27,9 @@ export function Footer({ page, eventShortLabel }: { page: "home" | "merch"; even
           </div>
           <div>
             <h4>Get involved</h4>
+            <a href={JOIN_URL} target="_blank" rel="noopener noreferrer">
+              Join the flock
+            </a>
             {FOOTER_INVOLVED_LINKS.map((link) => (
               <a key={link.hash} href={resolveNavHref(link, page)}>
                 {link.label}

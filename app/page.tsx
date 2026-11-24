@@ -11,16 +11,8 @@ import { PartnerCard, type Partner } from "@/components/content/PartnerCard";
 import type { EventInfo } from "@/lib/event";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 
-// Join button. Paste a Google Form or Tally URL into JOIN_URL and the button
-// points there instead. Left empty, it opens WhatsApp with the message started,
-// the same way the RSVP and merch buttons work, so it is never a dead button.
-const JOIN_URL = "";
-const joinHref =
-  JOIN_URL ||
-  buildWhatsAppLink(
-    "FLOCKING BIRDS \u00B7 I would like to join a flock\n\n" +
-      "Name:\nArea of Nairobi:\nWhat I do:\nWhat I am working on right now:",
-  );
+import { JOIN_URL } from "@/lib/join";
+
 // Partner enquiries are a different conversation to a membership request.
 const partnerHref = buildWhatsAppLink(
   "FLOCKING BIRDS \u00B7 partnership enquiry\n\n" +
@@ -196,7 +188,7 @@ export default function Home() {
                 actually apply them, and hold each other to it.
               </p>
               <div className="acts">
-                <a className="btn btn-gold" href="#join">
+                <a className="btn btn-gold" href={JOIN_URL} target="_blank" rel="noopener noreferrer">
                   Join the flock
                 </a>
                 <a className="btn btn-out" href="#social">
@@ -435,7 +427,7 @@ export default function Home() {
                   which one we are when things get tense.
                 </p>
                 <div className="acts" style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 24 }}>
-                  <a className="btn btn-gold" href="#join">
+                  <a className="btn btn-gold" href={JOIN_URL} target="_blank" rel="noopener noreferrer">
                     Join before the next book
                   </a>
                   <a className="btn btn-out" href="#shelf">
@@ -599,11 +591,6 @@ export default function Home() {
                 alt="Social 3.0 guest speaker card: Kalekye Mumo, The Art of Communication, a practical workshop on public speaking"
                 loading="lazy"
               />
-              <img
-                src="/images/social/kalekye_mumo.JPG"
-                alt="Kalekye Mumo, communications coach, Own Your Mic Programs, KM Network"
-                loading="lazy"
-              />
             </div>
           </div>
         </section>
@@ -693,18 +680,16 @@ export default function Home() {
                   </p>
                   <a
                     className="btn btn-dark"
-                    href={joinHref}
+                    href={JOIN_URL}
                     id="joinlink"
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     style={{ marginTop: 8 }}
                   >
-                    {JOIN_URL ? "Open the join form" : "Ask to join"}
+                    Open the join form
                   </a>
                   <p className="note" id="joinnote">
-                    {JOIN_URL
-                      ? "Takes about three minutes."
-                      : "Opens WhatsApp with your message started. We reply with the flock closest to you."}
+                    Takes about three minutes. Opens in a new tab.
                   </p>
                 </div>
                 <div className="fb-photo">

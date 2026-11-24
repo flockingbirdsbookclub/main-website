@@ -253,15 +253,15 @@ header.nav{position:sticky;top:0;z-index:60;background:var(--nest);
 .pc-role{font-size:.86rem;color:#CFC2AE}
 
 /* ---------- Social recap row (gallery) ---------- */
-.recap{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:12px}
-.recap-txt{grid-column:1 / -1;background:var(--paper);border:1px solid var(--rule-soft);
+.recap{display:grid;gap:12px;grid-template-columns:1fr;margin-top:12px}
+.recap-txt{background:var(--paper);border:1px solid var(--rule-soft);
   border-radius:10px;padding:22px}
 .recap-txt .pill{align-self:flex-start}
 .recap-txt h3{margin-top:12px;font-size:1.15rem}
 .recap-txt p{color:var(--ink-soft);font-size:.93rem;margin:8px 0 0}
 .recap img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:10px;display:block}
-@media(min-width:760px){.recap{grid-template-columns:2fr 1fr 1fr}
-  .recap-txt{grid-column:auto;align-self:stretch;display:flex;flex-direction:column;justify-content:center}}
+@media(min-width:760px){.recap{grid-template-columns:2fr 1fr}
+  .recap-txt{align-self:stretch;display:flex;flex-direction:column;justify-content:center}}
 
 /* ---------- join ---------- */
 .join{color:var(--ink)}

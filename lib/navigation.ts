@@ -27,8 +27,9 @@ export const FOOTER_EXPLORE_LINKS: NavLink[] = [
   { label: "Community", hash: "#community" },
 ];
 
+// "Join the flock" sits above these in the footer and goes to the join form
+// (lib/join.ts), not to a section.
 export const FOOTER_INVOLVED_LINKS: NavLink[] = [
-  { label: "Join the flock", hash: "#join" },
   { label: "Partner with us", hash: "#partners" },
 ];
 

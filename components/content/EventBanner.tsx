@@ -5,6 +5,7 @@ import type { EventInfo } from "@/lib/event";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { recordSubmission } from "@/lib/netlifyForms";
 import { Button } from "@/components/ui/Button";
+import { JOIN_URL } from "@/lib/join";
 
 // The #social section: the next Social, its poster and the RSVP form.
 // It sits on an ivory beat between the green hero and the green About band.
@@ -128,7 +129,9 @@ export function EventBanner({ event, description }: { event: EventInfo; descript
           </div>
           <p className="social-alt">
             Not ready for a Social yet?{" "}
-            <a href="#join">Join a flock instead</a>
+            <a href={JOIN_URL} target="_blank" rel="noopener noreferrer">
+              Join a flock instead
+            </a>
           </p>
         </div>
 

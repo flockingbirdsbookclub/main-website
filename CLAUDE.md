@@ -226,7 +226,8 @@ Cards inside a `.band` switch to the dark card greens automatically (`.band .car
 
 One gold button per section, at most. Across the site the gold button means **join**:
 "Join the flock" in the nav and hero, "Join before the next book" on the current read,
-"Ask to join" in the join section. Attending a Social is always the secondary, outline
+"Open the join form" in the join section. All of them go to the Google Form in
+`lib/join.ts`, in a new tab. Attending a Social is always the secondary, outline
 button ("Attend Social 4.0"). "Partner with us" is the one other gold button, alone in the
 partners band.
 
@@ -346,8 +347,8 @@ gallery and other fixed photos stay in `public/`.
 |---|---|
 | Merch products, prices, colours, sizes | `app/merch/page.tsx`, the `products` array |
 | Preorder deadline, deposit %, WhatsApp number for orders | `app/merch/page.tsx`, the `config` object |
-| RSVP, join and partner WhatsApp number | `lib/whatsapp.ts`, `WHATSAPP_NUMBER` |
-| Join button destination | `app/page.tsx`, `JOIN_URL`. Empty means it opens WhatsApp |
+| RSVP and partner WhatsApp number | `lib/whatsapp.ts`, `WHATSAPP_NUMBER` |
+| Join form link (every "Join the flock" button) | `lib/join.ts`, `JOIN_URL` |
 | Merch product photos | `app/merch/page.tsx`, the `photoSrc` field on each product |
 | Current book and shelf, covers and Kibanga links | `app/page.tsx`, `currentBook` and `shelfBooks` |
 | Partners (name, role, card image, link) | `app/page.tsx`, `partners` |
@@ -379,10 +380,9 @@ copy resized to about 800px tall (`innovation-stack-web.jpg`, `surrounded_by_idi
 `app/merch/page.tsx` has a yellow **DRAFT** banner at the top listing five things it needs before
 the page can be shared. It is not linked from the homepage while there is no drop on.
 
-**The join and partner buttons open WhatsApp.** There is no join form yet. Paste a Google
-Form or Tally URL into `JOIN_URL` in `app/page.tsx` and the button switches to it, changes
-its own label, and the WhatsApp fallback stops being used. Until then nobody hits a dead
-button.
+**Join goes to the Google Form; RSVP and partners go to WhatsApp.** Every "Join the flock"
+button reads `JOIN_URL` in `lib/join.ts`. The Social RSVP and "Partner with us" open WhatsApp
+with the message started, using `WHATSAPP_NUMBER` in `lib/whatsapp.ts`.
 
 **The order summary shows a thumbnail per line.** It uses each product's `photo`, and falls
 back to a tile with the product kind while photos are still missing. Clicking a thumbnail or

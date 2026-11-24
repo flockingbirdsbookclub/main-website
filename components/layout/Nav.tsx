@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { NAV_LINKS_LEFT, NAV_LINKS_RIGHT, NAV_LINKS, resolveNavHref } from "@/lib/navigation";
+import { JOIN_URL } from "@/lib/join";
 
 export function Nav({
   page,
@@ -29,9 +30,9 @@ export function Nav({
 
   const bookmarkHref = page === "merch" ? "/" : "#top";
   const bookmarkLabel = page === "merch" ? "Back to the homepage" : "Back to the top";
-  // The one gold button in the bar is always "Join the flock". The next Social
-  // is the first text link, so attending is one tap away but never louder.
-  const joinHref = page === "merch" ? "/#join" : "#join";
+  // The one gold button in the bar is always "Join the flock", straight to the
+  // join form. The next Social is the first text link, so attending is one tap
+  // away but never louder.
 
   return (
     <header className={["nav", scrolled ? "scrolled" : ""].filter(Boolean).join(" ")} id="nav">
@@ -58,7 +59,7 @@ export function Nav({
               </a>
             ))}
           </nav>
-          <a className="btn btn-gold cta" href={joinHref}>
+          <a className="btn btn-gold cta" href={JOIN_URL} target="_blank" rel="noopener noreferrer">
             Join the flock
           </a>
         </div>
@@ -90,7 +91,13 @@ export function Nav({
               </li>
             ) : null}
           </ul>
-          <a className="btn btn-gold cta" href={joinHref} onClick={() => setOpen(false)}>
+          <a
+            className="btn btn-gold cta"
+            href={JOIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+          >
             Join the flock
           </a>
         </div>
