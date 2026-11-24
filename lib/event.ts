@@ -12,6 +12,7 @@ export type EventInfo = {
   time: string;
   venueName: string;
   venueAddress: string;
+  who: string;
   bring: string;
 };
 

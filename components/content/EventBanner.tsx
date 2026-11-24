@@ -11,10 +11,18 @@ import { Button } from "@/components/ui/Button";
 // <form> only existed so the static host's form-detector could register
 // the field names. The WhatsApp handoff is the real user-facing flow;
 // writing the RSVP to a database happens in the forms-backend phase.
-export function EventBanner({ event, photoSrc }: { event: EventInfo; photoSrc?: string }) {
+export function EventBanner({
+  event,
+  description,
+  photoSrc,
+}: {
+  event: EventInfo;
+  description: string;
+  photoSrc?: string;
+}) {
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
-  const headsRef = useRef<HTMLInputElement>(null);
+  const headsRef = useRef<HTMLSelectElement>(null);
   const whoRef = useRef<HTMLSelectElement>(null);
 
   function handleRsvp() {
@@ -40,12 +48,11 @@ export function EventBanner({ event, photoSrc }: { event: EventInfo; photoSrc?: 
     <section id="social">
       <div className="wrap social-grid">
         <div>
-          <span className="pill">{event.pillText}</span>
-          <h2 style={{ marginTop: 16 }}>Join us for the Social</h2>
-          <p className="lede">
-            An afternoon to meet other flocks in person, swap book recommendations, and put faces
-            to the WhatsApp names.
-          </p>
+          <span className="pill">
+            {event.pillText} · {event.time}
+          </span>
+          <h2 style={{ marginTop: 16 }}>{event.heading}</h2>
+          <p style={{ maxWidth: "54ch", marginTop: 16 }}>{description}</p>
 
           <ul className="facts">
             <li>
@@ -57,12 +64,12 @@ export function EventBanner({ event, photoSrc }: { event: EventInfo; photoSrc?: 
             <li>
               <span className="k">WHERE</span>
               <span className="v">
-                {event.venueName}, {event.venueAddress}
+                {event.venueName} · {event.venueAddress}
               </span>
             </li>
             <li>
               <span className="k">WHO</span>
-              <span className="v">Members and anyone curious about joining</span>
+              <span className="v">{event.who}</span>
             </li>
             <li>
               <span className="k">BRING</span>
@@ -74,29 +81,47 @@ export function EventBanner({ event, photoSrc }: { event: EventInfo; photoSrc?: 
             <div className="rsvp-h">RSVP</div>
             <div className="rsvp-f">
               <div className="rf">
-                <label htmlFor="r-name">Name</label>
-                <input id="r-name" ref={nameRef} type="text" autoComplete="name" />
+                <label htmlFor="r-name">Your name</label>
+                <input id="r-name" ref={nameRef} type="text" autoComplete="name" placeholder="First and last name" />
               </div>
               <div className="rf">
                 <label htmlFor="r-phone">Phone</label>
-                <input id="r-phone" ref={phoneRef} type="tel" autoComplete="tel" />
+                <input id="r-phone" ref={phoneRef} type="tel" autoComplete="tel" placeholder="07XX XXX XXX" />
               </div>
               <div className="rf">
-                <label htmlFor="r-heads">Coming with</label>
-                <input id="r-heads" ref={headsRef} type="text" placeholder="Just me" />
+                <label htmlFor="r-heads">How many of you</label>
+                <select id="r-heads" ref={headsRef} defaultValue="Just me">
+                  <option>Just me</option>
+                  <option>Me + 1</option>
+                  <option>Me + 2</option>
+                  <option>Me + 3</option>
+                  <option>A group of 5 or more</option>
+                </select>
               </div>
               <div className="rf">
-                <label htmlFor="r-who">Member status</label>
-                <select id="r-who" ref={whoRef} defaultValue="Member">
-                  <option value="Member">Member</option>
-                  <option value="First-timer">First-timer</option>
+                <label htmlFor="r-who">Are you a member</label>
+                <select id="r-who" ref={whoRef} defaultValue="Yes, I am in a flock">
+                  <option>Yes, I am in a flock</option>
+                  <option>Not yet, first time</option>
+                  <option>I used to be, coming back</option>
                 </select>
               </div>
             </div>
             <Button variant="gold" className="rsvp-go" onClick={handleRsvp}>
               RSVP on WhatsApp
             </Button>
-            <p className="rsvp-note">We&apos;ll confirm your spot over WhatsApp.</p>
+            <p className="rsvp-note">
+              Opens WhatsApp with your RSVP written out. We reply with the venue and a reminder the
+              week of.
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 22 }}>
+            <a className="btn btn-line" href="#merch">
+              Reserve your merch
+            </a>
+            <a className="btn btn-line" href="#join">
+              Join a flock instead
+            </a>
           </div>
         </div>
 

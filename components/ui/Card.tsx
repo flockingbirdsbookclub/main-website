@@ -25,11 +25,17 @@ export function Card({
 export function CardGrid({
   columns,
   className,
+  style,
   children,
 }: {
   columns: 2 | 3 | 4;
   className?: string;
+  style?: CSSProperties;
   children: ReactNode;
 }) {
-  return <div className={["cards", `c${columns}`, className].filter(Boolean).join(" ")}>{children}</div>;
+  return (
+    <div className={["cards", `c${columns}`, className].filter(Boolean).join(" ")} style={style}>
+      {children}
+    </div>
+  );
 }
