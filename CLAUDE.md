@@ -34,12 +34,20 @@ app/layout.tsx           shared <html>, <head>, fonts, default metadata
 app/page.tsx             the landing page, with the next Social near the top
 app/merch/page.tsx       print-to-order merch preorder page
 app/not-found.tsx        not-found page
+app/login/               sign in: email, then a link or a 6-digit code (no passwords)
+app/auth/                where sign-in links land (confirm) and sign out
+app/account/             a signed-in member's own page
+app/admin/               the admin area, staff only
+proxy.ts                 keeps sessions fresh on /login, /auth, /account, /admin only
 app/globals.css          the one stylesheet for every page, including the colour tokens
 components/ui/           Button, Band, Card, PhotoSlot, TicksList
 components/layout/       Nav, Footer (one of each, used on both pages)
 components/content/      EventBanner (the Social + RSVP), BookCard, PartnerCard,
                          MerchShop, MerchProductCard
 lib/                     navigation links, event helpers, WhatsApp links, Netlify Forms
+lib/auth.ts              who is signed in, and requireUser / requireStaff
+lib/supabase/            Supabase clients: server.ts (as the visitor), admin.ts (secret key)
+supabase/                database migrations, seed and access tests (docs/DATA_MODEL.md)
 public/                  images, favicons, and __forms.html (see Do not touch)
 docs/PROJECT_SCOPE.md    project scope, roadmap, done list and open items
 docs/DATA_MODEL.md       the Supabase database design for every planned feature
@@ -49,8 +57,24 @@ index.html, merch.html,  the old static site. No longer served. Kept for referen
 404.html                 until the rebuild is live, then delete them
 ```
 
-To see it locally: `npm install` once, then `npm run dev` and open http://localhost:3000.
+To see it locally: `npm install` once, copy `.env.example` to `.env.local` and fill in the
+staging keys, then `npm run dev` and open http://localhost:3000.
 `npm run build` must pass before anything is pushed; Netlify runs the same command.
+
+Checks: `npm run test:db` (database access rules, needs a local Postgres on port 54329) and
+`npm run test:auth` (sign-in end to end against staging, needs a running site on port 3100).
+
+### Signing in
+
+- Only people the club knows can sign in: an email with a member profile, or a staff invite.
+  Public sign-up is off. The reply is the same for unknown emails, so the form can't reveal
+  who is a member.
+- Every page under `/admin` and `/account` calls `requireStaff()` or `requireUser()` from
+  `lib/auth.ts` on the server. `proxy.ts` only does a quick cookie check. The database's
+  access rules check a third time, so a page that forgets can't leak anything.
+- `lib/supabase/admin.ts` uses the secret key, which skips every access rule. Import it only
+  in server code, and only after checking who is asking.
+- The public pages stay static: `proxy.ts` doesn't run on them.
 
 **Do not add a CSS library, a UI kit, an icon library or a second framework.** The
 stylesheet is plain CSS on purpose, so the tokens below stay the only source of colour.

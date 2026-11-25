@@ -130,8 +130,8 @@ The result goes in [Done so far](#done-so-far).
 | 4b | Homepage clean-up for Social 4.0 | `rebuild-nextjs` | Done |
 | Go-live | Rebuild live on flockingbirdsbookclub.com | `main` | Done |
 | Docs | Scope, data model, branching | `staging` | Done |
-| 5 | Supabase: schema, access rules, storage, seed data | `phase-5-supabase` | **In progress** |
-| 6 | Logins for staff and members | `phase-6-auth` | Planned |
+| 5 | Supabase: schema, access rules, storage, seed data | `phase-5-supabase` | Done |
+| 6 | Logins for staff and members | `phase-6-auth` | **In progress** |
 | 7 | Admin core | `phase-7-admin` | Planned |
 | 8 | Homepage reads from Supabase | `phase-8-live-data` | Planned |
 | 9 | Past Socials | `staging` | Planned |
@@ -276,11 +276,18 @@ Things waiting on someone, not blocked work.
 | Dates of the two champions awards | Club | Seeded as July and 3 October 2026 |
 | Netlify branch deploys for `staging`, and deploy previews | Club | Site configuration, then Build & deploy, then Branches and deploy contexts |
 
+### Needed for Phase 6
+
+| Item | Waiting on | Notes |
+|---|---|---|
+| Supabase staging: sign-up off, return addresses, email template | Club | Steps in the Phase 6 hand-off |
+| Resend account and DNS records for flockingbirdsbookclub.com | Club | Until then, Supabase's own sender only emails project team members, about 2 an hour |
+| Netlify: site name, branch deploys for `staging`, environment variables | Club | Keys per deploy: staging project for `staging` and previews |
+
 ### Needed later
 
 | Item | Waiting on | Phase |
 |---|---|---|
-| Email provider account (Resend), and DNS records on the domain | Club | 6 |
 | Consent wording for profiles and photo tags | Club | 10 |
 | Whether a member's flock history is public | Club | 10 |
 | Scoring categories and points | Club | 12 |
@@ -348,6 +355,8 @@ New ideas go here first. Agree them, then give them a phase.
 | Date | Change |
 |---|---|
 | 25 Nov 2026 | Document created. Roadmap, decisions and done list carried over from the rebuild plan |
+| 25 Nov 2026 | **Phase 5 gate passed** and merged into `staging` (PR #2). Social 3.0 time and awards dates still to confirm |
+| 25 Nov 2026 | Phase 6 started: sign-in with email link or code, `/account`, `/admin`, `proxy.ts`. Found and fixed missing server-role grants (migration 12). 19 end-to-end sign-in checks pass against staging |
 | 25 Nov 2026 | Migration 11: a `data` JSON object on 23 main tables for extra details, with rules on what goes in it. Applied to staging without a reset; 96 checks pass |
 | 25 Nov 2026 | Schema normalised (venues, speakers, authors, purchase links, merch options and variants, bird-test scores and answers as tables; typed settings row; lookup tables; every foreign key indexed). Staging reset and rebuilt from 10 migrations; 89 checks pass |
 | 25 Nov 2026 | Production project created (`enpytoybafponfsjoild`). Staging has all nine migrations and the seed, passes the API checks, and has the three admin invites |

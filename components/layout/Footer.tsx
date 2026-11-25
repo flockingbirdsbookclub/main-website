@@ -35,6 +35,7 @@ export function Footer({ page, eventShortLabel }: { page: "home" | "merch"; even
                 {link.label}
               </a>
             ))}
+            <a href="/login">Member sign in</a>
           </div>
         </div>
         <div className="base">

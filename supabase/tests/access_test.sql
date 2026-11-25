@@ -8,7 +8,7 @@
 set client_min_messages = warning;
 
 create schema test;
-grant usage on schema test to anon, authenticated;
+grant usage on schema test to anon, authenticated, service_role;
 
 create function test.ok(cond boolean, name text) returns void
 language plpgsql as $$
@@ -41,7 +41,7 @@ begin
 end;
 $$;
 
-grant execute on all functions in schema test to anon, authenticated;
+grant execute on all functions in schema test to anon, authenticated, service_role;
 
 -- Signing in: Supabase puts the user id in the JWT claims.
 create function test.as_user(uid uuid) returns void
@@ -58,7 +58,7 @@ begin
   execute 'set role anon';
 end;
 $$;
-grant execute on all functions in schema test to anon, authenticated;
+grant execute on all functions in schema test to anon, authenticated, service_role;
 
 -- ---------------------------------------------------------------------------
 -- People (set up as the database owner)
@@ -349,5 +349,13 @@ select test.ok((select count(*) from public.audit_log where table_name = 'profil
                'profile changes are in the audit log');
 select test.ok((select count(*) from public.audit_log where table_name = 'game_attempts') = 0,
                'game attempts (visitor emails) are not copied into the audit log');
+
+-- Server code (the secret key) can read and write everything, emails included.
+set role service_role;
+select test.ok(test.count('select email from public.profiles') >= 1, 'server code can read member emails');
+select test.ok(test.count('select * from public.staff_invites') >= 1, 'server code can read staff invites');
+insert into public.event_rsvps (event_id, name) select id, 'Server RSVP' from public.events where slug = 'social-4';
+select test.ok(test.count($$select * from public.event_rsvps where name = 'Server RSVP'$$) = 1, 'server code can save RSVPs');
+reset role;
 
 \echo 'Access tests: all checks passed.'

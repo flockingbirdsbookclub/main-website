@@ -21,9 +21,13 @@ Built with Next.js and hosted on Netlify. `main` is the live site; new work is t
 You need Node.js 22 (the version is pinned in `.nvmrc`).
 
 ```bash
-npm install      # once
-npm run dev      # then open http://localhost:3000
+npm install                    # once
+cp .env.example .env.local     # once, then fill in the staging keys
+npm run dev                    # then open http://localhost:3000
 ```
+
+The keys are in the Supabase dashboard, staging project, under Project Settings → API
+Keys. `.env.local` is never committed.
 
 Before pushing, check that it builds. Netlify runs the same command, and a failed build
 does not go live:

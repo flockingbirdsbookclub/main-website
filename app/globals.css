@@ -43,7 +43,7 @@ a{color:var(--teal)}
    stands out from what is behind it (gold on ivory is only about 1.9:1). */
 :focus-visible{outline:3px solid var(--nest);outline-offset:3px;border-radius:4px}
 .band :focus-visible,.hero :focus-visible,header.nav :focus-visible,#mobnav :focus-visible,
-footer :focus-visible{outline-color:var(--gold)}
+footer :focus-visible,.gate :focus-visible{outline-color:var(--gold)}
 .champ :focus-visible{outline-color:#FFF}
 .wrap{max-width:var(--w);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
 section{padding:clamp(56px,9vw,104px) 0}
@@ -614,3 +614,44 @@ header.head::after{content:"";position:absolute;right:-110px;top:-150px;width:34
 .nf h1{color:var(--ivory);font-size:clamp(28px,7vw,44px);line-height:1.05}
 .nf p{color:#CFC2AE;margin-top:16px;line-height:1.55;font-size:clamp(15px,2.4vw,17px)}
 .nf .btn{margin-top:28px}
+
+/* Sign in (app/login). The not-found page's green screen, with a form.
+   .rf fields are already styled for a dark ground. */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background-color:var(--nest);color:var(--ivory);padding:40px 20px}
+.gate-box{width:100%;max-width:26rem}
+.gate-box > img{width:64px;height:auto;margin-bottom:22px}
+.gate h1{color:var(--ivory);font-size:clamp(28px,7vw,40px);line-height:1.05}
+.gate-box > p{color:#CFC2AE;margin-top:12px;line-height:1.55}
+.gate-form{margin-top:26px;display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.gate-form form{display:flex;flex-direction:column;gap:14px;width:100%}
+.gate-form .rf input{min-height:48px;width:100%}
+.gate-form .btn{width:100%;min-height:48px}
+.gate-form .btn:disabled{opacity:.7;cursor:progress;transform:none}
+.gate-note{color:#CFC2AE;line-height:1.55}
+.gate-note b{color:var(--ivory);word-break:break-all}
+.gate-note a,.gate-link{color:var(--ivory);text-decoration:underline;text-underline-offset:3px}
+.gate-link{background:none;border:0;padding:0;font:inherit;cursor:pointer;
+  min-height:44px;display:inline-flex;align-items:center}
+.gate-error{color:var(--gold);font-weight:600}
+
+/* Account and admin (app/account, app/admin). Ivory desk, paper cards. */
+.desk-head{background:var(--paper);border-bottom:1px solid var(--rule)}
+.desk-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  min-height:64px;flex-wrap:wrap;padding-block:10px}
+.desk-mark{display:inline-flex;align-items:center;gap:10px;min-height:44px;
+  font-family:var(--disp);font-weight:800;color:var(--nest);text-decoration:none}
+.desk-who{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.desk-email{color:var(--ink-soft);font-size:.92rem;word-break:break-all}
+.desk-who .btn{min-height:44px}
+.desk{padding-block:clamp(32px,6vw,64px);min-height:70vh}
+.desk h1{color:var(--nest);font-size:clamp(28px,6vw,42px);line-height:1.08}
+.desk-lede{color:var(--ink-soft);margin-top:10px;max-width:62ch}
+.desk-card{background:var(--paper);border:1px solid var(--rule-soft);border-radius:12px;
+  padding:clamp(18px,3vw,28px);margin-top:22px;max-width:46rem;
+  display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.desk-card h2{color:var(--nest);font-size:1.25rem}
+.desk-card p{color:var(--ink);max-width:62ch;line-height:1.55}
+.desk-soon{color:var(--ink-faint)}
+.desk-notice{background:var(--paper);border-left:4px solid var(--terracotta);
+  padding:12px 16px;margin-bottom:22px;color:var(--ink);max-width:46rem}
