@@ -1,119 +1,99 @@
 # Flocking Birds website
 
-**flockingbirdsbookclub.com**
+**[flockingbirdsbookclub.com](https://flockingbirdsbookclub.com)**
 
-Two static pages. No build step, no framework, no dependencies. Everything each page
-needs is inside its own HTML file, so you can open `index.html` by double-clicking it
-and see exactly what the live site will look like.
+The website for Flocking Birds, a Nairobi book club. It has a homepage, with the next
+Social, the current read, the shelf and partners, and a merch preorder page at `/merch`.
 
-```
-index.html            the landing page (currently in "event mode" for 3 October)
-merch.html            the merch preorder page
-404.html              shown when someone hits a URL that does not exist
-netlify.toml          Netlify settings: caching, security headers, /merch short link
-favicon.png           browser tab icon
-apple-touch-icon.png  icon when a member saves the site to their phone home screen
-favicon-32.png        small tab icon
-robots.txt            tells search engines they may index the site
-sitemap.xml           lists both pages for search engines
-CNAME                 only used if you ever move to GitHub Pages. Netlify ignores it.
-```
+Built with Next.js and hosted on Netlify. `main` is the live site; new work is tested on
+`staging` first (see Deploying below).
 
-The domain is already set correctly in every file. Nothing to find and replace.
-
----
-
-## Publishing on Netlify
-
-**1. Drop the folder.** Go to **app.netlify.com/drop** and drag this whole folder onto
-the page. You get a live URL in about ten seconds, something like
-`https://cheerful-pastry-a1b2c3.netlify.app`. The site is already working at that point
-and you can send it to the team.
-
-**2. Claim it.** Netlify will prompt you to sign up to keep the site. Use
-**flockingbirdsbookclub@gmail.com**, not a personal account, so whoever runs the club
-later still has access.
-
-**3. Give the site a sensible name.** *Site configuration* → *Change site name*. Call it
-`flockingbirds`. Your temporary URL becomes `flockingbirds.netlify.app`, which is much
-easier to share while DNS is still settling.
-
-**4. Add the domain.** *Domain management* → *Add a domain* → type
-`flockingbirdsbookclub.com`.
-
-**5. Point the domain at Netlify.** At your domain registrar, add these records:
-
-| Type | Host | Value |
-|---|---|---|
-| ALIAS *or* ANAME | `@` | `apex-loadbalancer.netlify.com` |
-| CNAME | `www` | `flockingbirds.netlify.app` |
-
-If your registrar does not offer ALIAS or ANAME, use this instead for the apex:
-
-| Type | Host | Value |
-|---|---|---|
-| A | `@` | `75.2.60.5` |
-
-Use ALIAS or ANAME if you can. Netlify recommends it over the A record because the fixed
-IP cannot route through their global network as efficiently.
-
-**6. HTTPS happens on its own.** Netlify issues a free Let's Encrypt certificate once DNS
-resolves. Usually minutes, sometimes longer while DNS propagates, which can take up to 24
-hours. Check *Domain management* → *HTTPS* if it has not appeared. Do this step now, not
-the night before the event.
-
-### Easier alternative
-
-If your registrar lets you change nameservers, Netlify can run DNS for you. *Domain
-management* → *Add a domain* → choose **Netlify DNS**, then paste the four nameservers
-it gives you into your registrar. No individual records to set up, and the certificate
-is automatic. The one catch: if your club email is on this domain, move the existing MX
-records across first or email will stop arriving.
-
----
-
-## Changing something later
-
-Drag the updated folder onto the same site in Netlify and it redeploys. Every deploy is
-kept, so you can roll back to a previous version from *Deploys* if something breaks.
-
-Common edits:
-
-| What | Where |
+| Read this | For |
 |---|---|
-| Merch products, prices, colours, sizes | `merch.html`, the `PRODUCTS` block near the bottom |
-| Preorder deadline, deposit %, WhatsApp number | `merch.html`, the `CONFIG` block just above `PRODUCTS` |
-| RSVP WhatsApp number | `index.html`, search for `var WA` |
-| Current book, dates, reading list | `index.html`, search for `Currently reading` |
-
-If more than one of you will be editing, connect the site to a GitHub repository instead
-of dragging folders. You get version history and browser-based editing, and Netlify
-redeploys on every change. Worth doing once the event is behind you, not before.
+| [`docs/PROJECT_SCOPE.md`](docs/PROJECT_SCOPE.md) | What the project covers, what is done, what comes next, and open items. A living document |
+| [`docs/DATA_MODEL.md`](docs/DATA_MODEL.md) | The database design for the admin area, member mural, blog, leaderboard, merch and games |
+| [`CLAUDE.md`](CLAUDE.md) | How to change the site without breaking the brand: colours, type, layout, voice, and where each piece of content lives |
 
 ---
 
-## Still to fill in
+## Run it on your computer
 
-Placeholders carry a gold **TO DO** tag on the image so you can spot them: six merch
-shots, six book covers, three post images, three testimonial avatars, and the partner
-logos.
+You need Node.js 22 (the version is pinned in `.nvmrc`).
 
-The merch page has a yellow **DRAFT** banner at the very top listing what it still needs:
-real prices, product photos, the WhatsApp number that receives orders, the deposit
-percentage, and the closing date. **Delete that banner block before you share the page.**
+```bash
+npm install      # once
+npm run dev      # then open http://localhost:3000
+```
 
-Also missing: `share-card.jpg`, a 1200x630 image used when someone shares a link on
-WhatsApp or LinkedIn. Both pages already reference it. Until it exists, links will share
-without a preview image.
+Before pushing, check that it builds. Netlify runs the same command, and a failed build
+does not go live:
+
+```bash
+npm run build
+```
 
 ---
 
-## After 3 October
+## What is where
 
-The site is in event mode. Once the Social has happened:
+```
+app/page.tsx           the homepage, and the content on it (event, books, partners)
+app/merch/page.tsx     the merch preorder page, its products and settings
+app/not-found.tsx      the page shown for an address that does not exist
+app/layout.tsx         shared page head: fonts, share tags, favicons
+app/globals.css        the one stylesheet, including the brand colours
+components/            the building blocks: buttons, nav, footer, cards, the RSVP form
+lib/                   settings used in several places (see below)
+public/                images, favicons, robots.txt, sitemap.xml, __forms.html
+docs/                  project scope
+netlify.toml           Netlify build settings, headers and caching
+next.config.ts         redirects from the old .html addresses, security headers
+scripts/               one-off image migration script from the rebuild
+index.html, merch.html, 404.html   the old static site, kept for reference only
+```
 
-- In `index.html`, delete the `<section class="band" id="social">` block, or rewrite it
-  as a recap with photos from the day
-- Delete the `<section id="merch">` block once preorders have closed
-- Change the nav button back from `RSVP · 3 Oct` to `Join the flock`
-- Swap the `3 Oct / Next Social` stat tile for whatever comes next
+### Common changes
+
+| To change | Edit |
+|---|---|
+| The next Social: date, time, venue, price, poster | `app/page.tsx`, the `event` object |
+| Current book and shelf, covers, buy links | `app/page.tsx`, `currentBook` and `shelfBooks` |
+| Partners | `app/page.tsx`, `partners` |
+| Join form link (every "Join the flock" button) | `lib/join.ts` |
+| WhatsApp number for RSVPs and partner enquiries | `lib/whatsapp.ts` |
+| Merch products, prices, deadline, deposit, order number | `app/merch/page.tsx` |
+| Nav and footer links | `lib/navigation.ts` |
+
+The full list, and the steps for moving on to the next Social, are in `CLAUDE.md`.
+Once the admin area is built (see the roadmap in `docs/PROJECT_SCOPE.md`), most of these
+move out of code and into forms.
+
+---
+
+## Deploying
+
+Netlify builds from this repository.
+
+| Branch | What it is |
+|---|---|
+| `main` | **The live site.** Every push deploys flockingbirdsbookclub.com |
+| `staging` | Where all new work collects and gets tested, on its own Netlify link |
+| `phase-N-name` | A larger phase, cut from `staging` and merged back by pull request |
+| `hotfix-*` | An urgent live fix, cut from `main`, then merged into `staging` too |
+
+Nothing merges from `staging` to `main` until every phase is tested and signed off. The
+rules are under "Branching and release" in `docs/PROJECT_SCOPE.md`.
+
+If a build fails, the live site stays on the last good version and the error shows in
+the Netlify **Deploys** tab. Any earlier deploy can be restored from there.
+
+Do not drag folders onto Netlify. The repository is the only source of what is live.
+
+**Domain.** `flockingbirdsbookclub.com` already points at Netlify, and HTTPS is automatic.
+Nothing to set up.
+
+**Forms.** RSVPs and merch orders are saved in the Netlify **Forms** tab, as well as
+being sent on WhatsApp. That depends on `public/__forms.html`. Do not delete it.
+
+**Secrets.** This repository is public. Never commit keys or passwords. When Supabase is
+added, its keys go into Netlify's environment variables, not into the code.

@@ -14,9 +14,20 @@ hosted on Netlify, deployed automatically from this repository.
 
 It is a **Next.js** app (App Router, TypeScript). It used to be two hand-written HTML
 files with no build step; it was rebuilt so the pages share components and so content
-can later be edited through an admin area instead of in code. The rebuild plan, with
-its phases, is in the commit history (`Phase 1` to `Phase 5`). Supabase and the
+can later be edited through an admin area instead of in code. Supabase and the
 `/admin` screens are not built yet. Until they are, all content is in the page files.
+
+**The project scope, roadmap and what is done live in `docs/PROJECT_SCOPE.md`.** It is a
+living document. When you finish a piece of work, add it to "Done so far" and the change
+log there. When new scope comes up, add it to the backlog before building it.
+The database design for every planned feature is in `docs/DATA_MODEL.md`. A migration
+that changes a table changes that file in the same commit.
+
+**Branches.** `main` is the live site. All work goes to `staging`, either directly or
+through a `phase-N-name` branch cut from `staging`. Nothing merges to `main` until every
+phase has passed its gate (see "Branching and release" in `docs/PROJECT_SCOPE.md`).
+Urgent live fixes go on a `hotfix-*` branch from `main`, then get merged into `staging`
+too.
 
 ```
 app/layout.tsx           shared <html>, <head>, fonts, default metadata
@@ -30,6 +41,8 @@ components/content/      EventBanner (the Social + RSVP), BookCard, PartnerCard,
                          MerchShop, MerchProductCard
 lib/                     navigation links, event helpers, WhatsApp links, Netlify Forms
 public/                  images, favicons, and __forms.html (see Do not touch)
+docs/PROJECT_SCOPE.md    project scope, roadmap, done list and open items
+docs/DATA_MODEL.md       the Supabase database design for every planned feature
 netlify.toml             Netlify config: build command, security headers, caching
 next.config.ts           Next.js config, including redirects for the old .html addresses
 index.html, merch.html,  the old static site. No longer served. Kept for reference
@@ -400,8 +413,9 @@ show a title and description but no picture.
 ## Deploying
 
 Netlify builds from this repository: it runs `npm run build` and publishes the result.
-Push a change, or edit a file on github.com and commit, and the site updates in a couple
-of minutes. If the build fails, the live site stays on the last good version and the
+A push to `main` updates the live site in a couple of minutes, so only push to `main`
+when a release or a hotfix has been approved. `staging` and pull requests get their own
+Netlify test links. If the build fails, the live site stays on the last good version and the
 error is in the Netlify Deploys tab. Every deploy is kept, so a bad change can
 be rolled back from the Netlify Deploys tab.
 
