@@ -3,7 +3,7 @@
 // one setting. Hardcoded for now (Phase 3/4, no DB yet) — becomes a
 // `settings.whatsapp_number` read in Phase 11.
 
-export const WHATSAPP_NUMBER = "254723906069";
+export const WHATSAPP_NUMBER = "254716681166";
 
 export function buildWhatsAppLink(message: string, number: string = WHATSAPP_NUMBER): string {
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
