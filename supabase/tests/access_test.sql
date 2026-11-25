@@ -207,10 +207,10 @@ select test.as_user('00000000-0000-0000-0000-0000000000a1');
 select test.refused($$select public.approve_profile_changes(id) from public.profiles where slug = 'amina'$$,
                     'a member cannot approve their own changes');
 select test.refused($$insert into public.articles (slug, author_profile_id, title, body, status)
-                      values ('sneaky', public.current_profile_id(), 'Sneaky', 'x', 'published')$$,
+                      values ('sneaky', private.current_profile_id(), 'Sneaky', 'x', 'published')$$,
                     'a member cannot publish an article');
 insert into public.articles (slug, author_profile_id, title, body, status)
-values ('my-first-article', public.current_profile_id(), 'My first article', 'Hello.', 'submitted');
+values ('my-first-article', private.current_profile_id(), 'My first article', 'Hello.', 'submitted');
 select test.refused($$insert into public.articles (slug, author_profile_id, title) values ('as-brian', (select id from public.profiles where slug = 'brian'), 'x')$$,
                     'a member cannot write as someone else');
 select test.refused($$insert into storage.objects (bucket_id, name) values ('avatars', '00000000-0000-0000-0000-0000000000b1/photo.jpg')$$,
@@ -220,7 +220,7 @@ select test.refused($$insert into storage.objects (bucket_id, name) values ('cov
 insert into storage.objects (bucket_id, name) values ('avatars', '00000000-0000-0000-0000-0000000000a1/photo.jpg');
 select test.refused($$insert into public.settings (key, value) values ('x', '1')$$, 'a member cannot add settings');
 select test.refused($$insert into public.score_entries (season_id, category_id, profile_id, points)
-                      select s.id, c.id, public.current_profile_id(), 1000 from public.seasons s, public.score_categories c limit 1$$,
+                      select s.id, c.id, private.current_profile_id(), 1000 from public.seasons s, public.score_categories c limit 1$$,
                     'a member cannot award themselves points');
 reset role;
 select test.ok(test.count($$select * from storage.objects where bucket_id = 'avatars'$$) = 1, 'a member can upload to their own folder');

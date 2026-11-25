@@ -168,8 +168,9 @@ profile and nothing a member edits can make them staff.
 | `user_id` | uuid → `auth.users`, primary key | |
 | `role` | `admin`, `editor` | Editors manage content. Admins also manage staff, settings and points |
 
-The database functions `is_staff()` and `is_admin()` read this table and are used in the
-access rules.
+The database functions `private.is_staff()` and `private.is_admin()` read this table and
+are used in the access rules. Helpers live in the `private` schema, which the API doesn't
+expose, so they can't be called over HTTP.
 
 ### `staff_invites`
 
@@ -717,6 +718,29 @@ Never run it against a real project.
   insert into those tables.
 - **Staff-only fields are guarded by triggers**, not only by the API. Even if a member
   sends `is_featured = true`, it is reset.
+
+- **Helpers are in `private`.** `private.current_profile_id()`, `private.is_staff()` and
+  the rest are for access rules and triggers. The functions the app may call are in
+  `public`: `approve_profile_changes()`, `profile_private()`, `staff_game_options()` and
+  `merch_product_progress()`.
+- **Applying to a project.** `supabase link --project-ref <ref>` once (it asks for the
+  database password), then `supabase db push --remote`. Add `--include-seed` the first
+  time. Staff invites are added with SQL in the dashboard, never in a migration.
+
+### Projects
+
+| | Ref | Region |
+|---|---|---|
+| Staging | `eqanskhfqaxtbxhdafiw` | West EU (Ireland) |
+| Production | `enpytoybafponfsjoild` | West EU (Ireland) |
+
+Production gets the migrations only after staging passes the Phase 5 gate.
+
+### Supabase advisors
+
+After migration 9, Supabase's security and performance advisors show no errors. The
+warnings left are deliberate: the four functions above are meant to be callable, and
+some tables have several read rules side by side (public, members-only, your own).
 
 ### Views the pages read
 

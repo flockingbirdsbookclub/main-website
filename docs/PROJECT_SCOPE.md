@@ -272,8 +272,6 @@ Things waiting on someone, not blocked work.
 
 | Item | Waiting on | Notes |
 |---|---|---|
-| Production Supabase project | Club | Staging is `eqanskhfqaxtbxhdafiw`. The service role keys go only into Netlify env vars |
-| Supabase access for Claude Code | Club | The connection in `.mcp.json` is limited to the staging project and needs a restart to load |
 | Social 3.0 start and end times | Club | Seeded as 12 to 6 PM; confirm before `/socials/social-3` goes live |
 | Dates of the two champions awards | Club | Seeded as July and 3 October 2026 |
 | Netlify branch deploys for `staging`, and deploy previews | Club | Site configuration, then Build & deploy, then Branches and deploy contexts |
@@ -350,5 +348,6 @@ New ideas go here first. Agree them, then give them a phase.
 | Date | Change |
 |---|---|
 | 25 Nov 2026 | Document created. Roadmap, decisions and done list carried over from the rebuild plan |
+| 25 Nov 2026 | Production project created (`enpytoybafponfsjoild`). Staging has all nine migrations and the seed, passes the API checks, and has the three admin invites |
 | 25 Nov 2026 | Phase 5 started: eight migrations, seed and 71 access checks on `phase-5-supabase`. Staff are three admins, invited in Supabase, not in the repo |
 | 25 Nov 2026 | Added seven features: admin, mural, merch store, leaderboard, games, past Socials, blog. Added `DATA_MODEL.md`. Roadmap re-sequenced to Phases 5 to 15 with goals and checks. Members now log in, so "member accounts" left Out of scope. Added the staging branch workflow and phase gate |
