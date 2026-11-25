@@ -14,7 +14,7 @@ export function Footer({ page, eventShortLabel }: { page: "home" | "merch"; even
       <div className="wrap">
         <div className="cols">
           <div>
-            <img className="mark" src="/images/footer/mark.png" alt="Flocking Birds" />
+            <img className="mark" loading="lazy" decoding="async" src="/images/footer/mark.png" alt="Flocking Birds" />
             <p className="motto">Different journeys. Common purpose. Stronger together.</p>
           </div>
           <div>

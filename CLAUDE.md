@@ -374,7 +374,9 @@ If the club gets a till number, put it in that note in `EventBanner.tsx`.
 
 **Large images get a `-web` copy.** Originals stay as they were uploaded; the page uses a
 copy resized to about 800px tall (`innovation-stack-web.jpg`, `surrounded_by_idiots-web.jpg`,
-`Blue-Ocean-Strategy-web.jpg`, and the partner cards as `.jpg`). Make one with
+`Blue-Ocean-Strategy-web.jpg`, `bookclub_social_4-web.jpg` at 1000px wide, and the partner
+cards as `.jpg`). Images below the first screen get `loading="lazy" decoding="async"`
+(`PhotoSlot` takes a `loading` prop); the nav mark, hero collage and Social poster stay eager. Make one with
 `sips --resampleHeight 800 in.jpg --out in-web.jpg`.
 
 `app/merch/page.tsx` has a yellow **DRAFT** banner at the top listing five things it needs before

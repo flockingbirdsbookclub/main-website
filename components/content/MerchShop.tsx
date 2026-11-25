@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { MerchProductCard, type MerchProduct, type MerchSelection } from "@/components/content/MerchProductCard";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { recordSubmission } from "@/lib/netlifyForms";
@@ -36,6 +36,17 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
   const [flashKey, setFlashKey] = useState<string | null>(null);
   const [copyLabel, setCopyLabel] = useState("Or copy the order as text");
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  // One timer each for the card flash and the copy label, so a quick second
+  // click restarts the feedback instead of an older timer ending it early.
+  const flashTimer = useRef<number | undefined>(undefined);
+  const copyTimer = useRef<number | undefined>(undefined);
+  useEffect(
+    () => () => {
+      window.clearTimeout(flashTimer.current);
+      window.clearTimeout(copyTimer.current);
+    },
+    []
+  );
 
   const { label: closesLabel, daysText } = useMemo(() => closingLabel(config.closesDate), [config.closesDate]);
 
@@ -63,7 +74,8 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
     if (!el) return;
     el.scrollIntoView({ behavior: "smooth", block: "center" });
     setFlashKey(productId);
-    window.setTimeout(() => setFlashKey(null), 1200);
+    window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setFlashKey(null), 1200);
   }
 
   function summaryText() {
@@ -114,7 +126,8 @@ export function MerchShop({ products, config }: { products: MerchProduct[]; conf
     } catch {
       setCopyLabel("Could not copy. Screenshot your order instead.");
     }
-    window.setTimeout(() => setCopyLabel("Or copy the order as text"), 3000);
+    window.clearTimeout(copyTimer.current);
+    copyTimer.current = window.setTimeout(() => setCopyLabel("Or copy the order as text"), 3000);
   }
 
   return (

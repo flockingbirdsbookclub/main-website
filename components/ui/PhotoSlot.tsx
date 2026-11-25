@@ -11,19 +11,22 @@ export function PhotoSlot({
   ratio,
   slotLabel,
   className,
+  loading,
 }: {
   src?: string | null;
   alt?: string;
   ratio?: Ratio;
   slotLabel: string;
   className?: string;
+  // "lazy" for anything below the first screen. The hero stays eager.
+  loading?: "lazy" | "eager";
 }) {
   const done = Boolean(src);
   const cls = ["ph", ratio, done ? "done" : "", className].filter(Boolean).join(" ");
 
   return (
     <div className={cls} data-slot={slotLabel} {...(done ? { "data-done": "" } : {})}>
-      {done ? <img src={src!} alt={alt} /> : null}
+      {done ? <img src={src!} alt={alt} loading={loading} decoding={loading === "lazy" ? "async" : undefined} /> : null}
     </div>
   );
 }

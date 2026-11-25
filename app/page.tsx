@@ -37,7 +37,7 @@ const event: EventInfo = {
   priceNote: "covers a buffet lunch",
   who: "Open to everyone. You do not need to be a member",
   bring: "Yourself. Bring a friend who reads, or one who says they will",
-  posterSrc: "/images/social/bookclub_social_4.jpg",
+  posterSrc: "/images/social/bookclub_social_4-web.jpg",
   posterAlt:
     "Poster for BookClub Social 4.0, Surrounded by Idiots edition: four personality types, one room. Saturday 5 December, 12 to 6 PM, Golden Tulip Westlands, KES 2,000 covers buffet lunch.",
 };
@@ -265,6 +265,7 @@ export default function Home() {
                 </p>
               </div>
               <PhotoSlot
+                loading="lazy"
                 src="/images/about/photo.jpg"
                 ratio="r43"
                 slotLabel=""
@@ -390,7 +391,7 @@ export default function Home() {
                 or thirty pages a week, which fits around a full-time job and a life. And if you
                 fall behind, come to the discussion anyway. Nobody is marking your homework.
               </p>
-              <img
+              <img loading="lazy" decoding="async"
                 className="bandimg"
                 src="/images/how/room.jpg"
                 alt="The room during the July community hangout"
@@ -486,7 +487,7 @@ export default function Home() {
                 </ul>
               </div>
               <div>
-                <img
+                <img loading="lazy" decoding="async"
                   className="champimg"
                   src="/images/champions/trophy.jpg"
                   alt="The Flocking Birds community champions trophy"
@@ -518,7 +519,7 @@ export default function Home() {
                   {posts.map((post) => (
                     <a className="post" key={post.url} href={post.url} target="_blank" rel="noopener noreferrer">
                       {post.imageSrc ? (
-                        <PhotoSlot src={post.imageSrc} ratio="r169" slotLabel="" alt="" />
+                        <PhotoSlot loading="lazy" src={post.imageSrc} ratio="r169" slotLabel="" alt="" />
                       ) : null}
                       <div className="body">
                         <span className="kind">{post.kind}</span>
@@ -538,7 +539,7 @@ export default function Home() {
                       <div className="by">
                         {t.avatarSrc ? (
                           <div className="av">
-                            <img src={t.avatarSrc} alt="" />
+                            <img loading="lazy" decoding="async" src={t.avatarSrc} alt="" />
                           </div>
                         ) : null}
                         <div>
@@ -567,11 +568,11 @@ export default function Home() {
               argument about a chapter.
             </p>
             <div className="gal" style={{ marginTop: 32 }}>
-              <img className="big" src="/images/gallery/photo-big.jpg" alt="Flocking Birds community hangout, July 2026" style={{ gridColumn: "span 2", gridRow: "span 2", borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-2.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-3.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-4.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
-              <img src="/images/gallery/photo-5.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img loading="lazy" decoding="async" className="big" src="/images/gallery/photo-big.jpg" alt="Flocking Birds community hangout, July 2026" style={{ gridColumn: "span 2", gridRow: "span 2", borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img loading="lazy" decoding="async" src="/images/gallery/photo-2.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img loading="lazy" decoding="async" src="/images/gallery/photo-3.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img loading="lazy" decoding="async" src="/images/gallery/photo-4.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
+              <img loading="lazy" decoding="async" src="/images/gallery/photo-5.jpg" alt="Flocking Birds community hangout, July 2026" style={{ borderRadius: 10, width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
             <div className="recap">
               <div className="recap-txt">
@@ -689,7 +690,7 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="fb-photo">
-                  <img src="/images/join/photo.jpg" alt="The flock together at a Flocking Birds community hangout" />
+                  <img loading="lazy" decoding="async" src="/images/join/photo.jpg" alt="The flock together at a Flocking Birds community hangout" />
                 </div>
               </div>
             </div>

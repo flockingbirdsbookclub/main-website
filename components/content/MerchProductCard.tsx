@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type MerchOption = {
   label: string;
@@ -56,6 +56,10 @@ export function MerchProductCard({
   );
   const [qty, setQty] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
+  // One timer at a time: a second tap restarts the "Added" flash instead of
+  // an older timer cutting it short. Cleared on unmount.
+  const addedTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(addedTimer.current), []);
 
   function handleAdd() {
     const variant = product.options.map((opt) => selected[opt.label]).join(" / ");
@@ -69,7 +73,8 @@ export function MerchProductCard({
       variant,
     });
     setJustAdded(true);
-    window.setTimeout(() => setJustAdded(false), 1600);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => setJustAdded(false), 1600);
   }
 
   return (
