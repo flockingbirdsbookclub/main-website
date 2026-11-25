@@ -4,8 +4,9 @@ The Supabase database design for every feature in
 [`PROJECT_SCOPE.md`](PROJECT_SCOPE.md). It covers today's content and all seven new
 features, so Phase 5 creates one schema that later phases build on rather than rework.
 
-This is a design, not the SQL. Phase 5 turns it into migrations in `supabase/migrations/`.
-When a migration changes a table, change this file in the same commit.
+The SQL is in `supabase/migrations/`, the starting content in `supabase/seed.sql`, and
+the access-rule tests in `supabase/tests/access_test.sql`. When a migration changes a
+table, change this file in the same commit. See [Building and testing](#building-and-testing).
 
 Last updated: 25 November 2026
 
@@ -29,6 +30,7 @@ Last updated: 25 November 2026
 14. [Access rules](#access-rules)
 15. [Storage buckets](#storage-buckets)
 16. [Where today's content goes](#where-todays-content-goes)
+17. [Building and testing](#building-and-testing)
 
 ---
 
@@ -102,9 +104,12 @@ first use an email link.
 | `profession` | text | |
 | `fun_fact` | text | "Something fun about me" |
 | `bio` | text, null | Short, optional |
-| `personality_key` | text → `personality_types.key`, null | Shown only if the member opts in |
+| `personality_key` | text → `personality_types.key`, null | |
+| `show_personality` | bool | Their bird shows on the mural only when true |
 | `joined_on` | date | |
-| `status` | `draft`, `submitted`, `published`, `rejected` | Goes back to `submitted` when the name, photo, profession or fun fact changes |
+| `status` | `draft`, `submitted`, `published`, `rejected` | A member can only move it between `draft` and `submitted` |
+| `pending_changes` | jsonb, null | A member's edits to a published profile wait here until staff approve them with `approve_profile_changes()`. The published version stays up meanwhile |
+| `review_note` | text, null | Shown to the member if their profile is returned |
 | `is_featured` | bool | |
 | `sort_order` | int | |
 | `consent_at` | timestamptz | When they agreed to be shown on the mural |
@@ -163,8 +168,14 @@ profile and nothing a member edits can make them staff.
 | `user_id` | uuid → `auth.users`, primary key | |
 | `role` | `admin`, `editor` | Editors manage content. Admins also manage staff, settings and points |
 
-A database function `is_staff()` and `is_admin()` reads this table and is used in the
+The database functions `is_staff()` and `is_admin()` read this table and are used in the
 access rules.
+
+### `staff_invites`
+
+`email`, `role`. Someone whose email is here becomes staff the first time they sign in.
+Nobody can read it through the API. **Staff emails are added in the Supabase dashboard,
+never in this repository**, because the repository is public.
 
 ---
 
@@ -176,7 +187,7 @@ Every uploaded image, once.
 
 | Column | Type | Notes |
 |---|---|---|
-| `bucket` | text | See [Storage buckets](#storage-buckets) |
+| `bucket` | text | See [Storage buckets](#storage-buckets). `site` means a file already in the website's `public/` folder, with a path like `/images/books/x.jpg`, so today's images work before anything is uploaded |
 | `path` | text | Unique with `bucket` |
 | `alt` | text | Required. The upload form does not save without it |
 | `width`, `height` | int | Saved on upload, so pages can reserve space and avoid layout jumps |
@@ -291,8 +302,9 @@ When a book was or is being read. Replaces the planned `kind: current | shelf` c
 |---|---|---|
 | `book_id` | uuid → `books` | |
 | `flock_id` | uuid → `flocks`, null | Null means the whole club |
-| `starts_on`, `ends_on` | date | |
+| `starts_on`, `ends_on` | date, null | Null for older books whose dates were never recorded |
 | `note` | text, null | |
+| `sort_order` | int | Keeps undated shelf books in order |
 
 - **Current read:** the club-wide cycle that covers today.
 - **Shelf:** books from past cycles, most recent first.
@@ -519,8 +531,9 @@ see whether each item has hit its minimum run, and the printer's size list is on
 | `weights` | jsonb | For the bird test, `{"red":2,"yellow":0,"green":1,"blue":0}`. For a quiz, `{"correct":true}` |
 | `sort_order` | int | |
 
-Weights are never sent to the browser. The page sends back the chosen option ids and
-the server works out the result.
+Weights are never sent to the browser. The `weights` column isn't granted to anyone
+through the API; staff read it with `staff_game_options()`. The page sends back the chosen
+option ids and the server works out the result.
 
 ### `personality_types`
 
@@ -667,3 +680,45 @@ the day it switches over.
 | Images in `public/images/books`, `partners`, `social` | Storage buckets, plus `media` |
 
 The texture, nav mark, favicons, hero collage and other fixed photos stay in `public/`.
+
+---
+
+## Building and testing
+
+### Run the tests locally
+
+```bash
+scripts/test-db.sh
+```
+
+This builds the whole database from empty on a local Postgres (Postgres.app is enough,
+on port 54329, and no Docker is needed). It then runs the seed twice, to prove it is safe
+to re-run, and runs `supabase/tests/access_test.sql`. That file signs in as a visitor, a
+signed-in stranger, two members, an editor and an admin, and checks over 60 things,
+including:
+
+- visitors can't write anything, or read emails, phone numbers, drafts, RSVPs, orders,
+  quiz answers or the audit log
+- members can't publish, feature themselves, edit someone else, or award points
+- edits to a published profile wait for review
+- automatic points arrive exactly once
+- points can't be edited or deleted, even by the database owner
+
+`supabase/tests/local_stub.sql` stands in for Supabase's `auth` and `storage` schemas.
+Never run it against a real project.
+
+### Rules for the app code
+
+- **Name your columns when reading `profiles`.** `select *` is refused, because the
+  table holds members' emails and the public grant leaves those out. Use
+  `profile_private()` for the email and any parked edits.
+- **RSVPs, merch orders and game attempts are written by server code** using the
+  service role, after checking the input and working out totals. The browser can't
+  insert into those tables.
+- **Staff-only fields are guarded by triggers**, not only by the API. Even if a member
+  sends `is_featured = true`, it is reset.
+
+### Views the pages read
+
+`next_event`, `past_events`, `current_reads`, `shelf`, `mural_entries`, `flock_standings`,
+`member_standings`. All use `security_invoker`, so the access rules still apply.
