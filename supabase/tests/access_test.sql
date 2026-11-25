@@ -311,6 +311,26 @@ select a.id, o.question_id, o.id from public.game_attempts a, public.game_option
 select test.ok((select points from public.personality_attempt_scores where personality_key = 'red') = 2,
                'bird test totals are worked out from the answers');
 
+-- The data field
+select test.ok((select data from public.events where slug = 'social-4') = '{}'::jsonb, 'data defaults to an empty object');
+update public.events set data = '{"dress_code": "Smart casual"}' where slug = 'social-4';
+select test.ok((select data ->> 'dress_code' from public.next_event) = 'Smart casual', 'extra details show through the views');
+select test.refused($$update public.events set data = '["not", "an", "object"]' where slug = 'social-4'$$,
+                    'data must be a JSON object');
+select test.refused($$update public.events set data = jsonb_build_object('big', repeat('x', 40000)) where slug = 'social-4'$$,
+                    'data is capped at 32 KB');
+select test.as_user('00000000-0000-0000-0000-0000000000a1');
+update public.profiles set data = '{"badge": "self-awarded"}' where slug = 'amina';
+reset role;
+select test.ok((select data from public.profiles where slug = 'amina') = '{}'::jsonb, 'members cannot change their profile''s data');
+select test.as_user('00000000-0000-0000-0000-00000000000e');
+update public.profiles set data = '{"badge": "founding member"}' where slug = 'amina';
+reset role;
+select test.ok((select data ->> 'badge' from public.mural_entries where slug = 'amina') = 'founding member',
+               'staff set profile data, and the mural shows it');
+select test.ok((select count(*) from public.audit_log where table_name = 'profiles' and diff ? 'data') >= 1,
+               'changes to data are in the audit log');
+
 -- Testimonials are attributed once
 select test.refused($$insert into public.testimonials (quote, profile_id, author_name)
                       select 'x', id, 'Also a name' from public.profiles limit 1$$,

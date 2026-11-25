@@ -68,9 +68,9 @@ to.
   colour used by many rows is one row that the others point at. Renaming Golden Tulip
   is one change, not one per Social.
 - **Lists are rows, not JSON.** Merch options and their values, answer scores, and the
-  answers someone gave are tables. Only two JSON columns remain, both on purpose:
-  `audit_log.diff` (a record of changes to any table) and `profiles.pending_changes` (a
-  parked copy of a member's edits, waiting for review).
+  answers someone gave are tables. Apart from the `data` field below, only two JSON
+  columns exist: `audit_log.diff` (a record of changes to any table) and
+  `profiles.pending_changes` (a parked copy of a member's edits, waiting for review).
 - **Totals are worked out, not stored.** Order totals, deposits, standings, bird test
   scores and the shelf are views over the rows they come from, so they can't disagree.
 - **Kept on purpose: snapshots of the moment.** An order line keeps the price paid. An
@@ -81,6 +81,33 @@ to.
   the admin area, with no migration. Fixed workflow states (`status`) stay as checks.
 - **Optional relationships use their own tables**, such as `book_authors` and
   `book_purchase_links`, so "one" can become "many" without a migration.
+
+### The `data` field
+
+The main tables have a `data` column: a JSON object for extra details that don't deserve
+a column yet. Examples are a Social's dress code, a partner's discount code, or a
+product's care instructions. Adding a key needs no migration.
+
+| Rule | Why |
+|---|---|
+| Always a JSON object, `{}` by default, at most 32 KB | Enforced by a check on every table |
+| As public as its row | Anyone who can read the row can read its `data`. Nothing private goes in it |
+| Promote a key to a column once a page filters, sorts or joins on it, or it must always be there | Columns get a type, a check, an index and a place in the tests. JSON gets none of those |
+| Bookkeeping stays in columns: `id`, `created_at`, `updated_at`, `status`, `archived_at` | These are sorted, filtered and kept correct by triggers on every query |
+| Members can't change `profiles.data`; staff can | It's for things like a "founding member" badge |
+| Changes to `data` are in the audit log | Like any other column |
+
+Tables with `data`: `media`, `profiles`, `flocks`, `personality_types`, `partners`,
+`authors`, `books`, `reading_cycles`, `venues`, `events`, `speakers`, `event_rsvps`,
+`albums`, `testimonials`, `articles`, `seasons`, `awards`, `merch_drops`,
+`merch_products`, `merch_variants`, `merch_orders`, `games`, `game_attempts`.
+The page views (`event_cards`, `next_event`, `past_events`, `book_cards`, `current_reads`,
+`shelf`, `mural_entries`, `merch_variant_cards`) include it.
+
+Join tables, lookup tables, the points ledger, `site_settings` and the staff tables have
+no `data`. They stay strict on purpose.
+
+To read a key in the app: `next_event?select=heading,data->>dress_code`.
 
 ### Adding a field
 
@@ -810,7 +837,7 @@ scripts/test-db.sh
 This builds the whole database from empty on a local Postgres (Postgres.app is enough,
 on port 54329, and no Docker is needed). It then runs the seed twice, to prove it is safe
 to re-run, and runs `supabase/tests/access_test.sql`. That file signs in as a visitor, a
-signed-in stranger, two members, an editor and an admin, and makes 89 checks,
+signed-in stranger, two members, an editor and an admin, and makes 96 checks,
 including:
 
 - visitors can't write anything, or read emails, phone numbers, drafts, RSVPs, orders,
