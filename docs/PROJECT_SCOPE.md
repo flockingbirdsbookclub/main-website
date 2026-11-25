@@ -348,6 +348,7 @@ New ideas go here first. Agree them, then give them a phase.
 | Date | Change |
 |---|---|
 | 25 Nov 2026 | Document created. Roadmap, decisions and done list carried over from the rebuild plan |
+| 25 Nov 2026 | Schema normalised (venues, speakers, authors, purchase links, merch options and variants, bird-test scores and answers as tables; typed settings row; lookup tables; every foreign key indexed). Staging reset and rebuilt from 10 migrations; 89 checks pass |
 | 25 Nov 2026 | Production project created (`enpytoybafponfsjoild`). Staging has all nine migrations and the seed, passes the API checks, and has the three admin invites |
 | 25 Nov 2026 | Phase 5 started: eight migrations, seed and 71 access checks on `phase-5-supabase`. Staff are three admins, invited in Supabase, not in the repo |
 | 25 Nov 2026 | Added seven features: admin, mural, merch store, leaderboard, games, past Socials, blog. Added `DATA_MODEL.md`. Roadmap re-sequenced to Phases 5 to 15 with goals and checks. Members now log in, so "member accounts" left Out of scope. Added the staging branch workflow and phase gate |
