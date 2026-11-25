@@ -91,15 +91,22 @@ create table public.media (
 );
 
 -- ---------------------------------------------------------------------------
--- Settings: values used in many places
+-- Site settings: one row, one typed column per setting
 -- ---------------------------------------------------------------------------
+-- A single row rather than key/value pairs, so every setting has a real type
+-- and its own checks. A new setting is a new column (one-line migration).
 
-create table public.settings (
-  key        text primary key check (key ~ '^[a-z0-9_]+$'),
-  value      jsonb not null,
-  is_public  boolean not null default false,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+create table public.site_settings (
+  id                boolean primary key default true check (id),
+  join_url          text not null check (join_url ~ '^https://'),
+  whatsapp_rsvp     text not null check (whatsapp_rsvp ~ '^[0-9]{10,15}$'),
+  whatsapp_partners text not null check (whatsapp_partners ~ '^[0-9]{10,15}$'),
+  whatsapp_merch    text not null check (whatsapp_merch ~ '^[0-9]{10,15}$'),
+  currency          char(3) not null default 'KES' check (currency ~ '^[A-Z]{3}$'),
+  merch_deposit_pct int not null default 50 check (merch_deposit_pct between 0 and 100),
+  mpesa_till        text check (mpesa_till ~ '^[0-9]{5,10}$'),
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now()
 );
 
 -- ---------------------------------------------------------------------------
@@ -133,9 +140,6 @@ declare
   rid text;
 begin
   rid := coalesce(new_j, old_j) ->> 'id';
-  if rid is null then
-    rid := coalesce(new_j, old_j) ->> 'key';
-  end if;
   if rid is null then
     rid := coalesce(new_j, old_j) ->> 'user_id';
   end if;
@@ -191,7 +195,7 @@ $$;
 select public.track_table('public.staff_roles');
 select public.track_table('public.staff_invites');
 select public.track_table('public.media');
-select public.track_table('public.settings');
+select public.track_table('public.site_settings');
 
 -- ---------------------------------------------------------------------------
 -- Access
@@ -200,12 +204,12 @@ select public.track_table('public.settings');
 alter table public.staff_roles   enable row level security;
 alter table public.staff_invites enable row level security;
 alter table public.media         enable row level security;
-alter table public.settings      enable row level security;
+alter table public.site_settings enable row level security;
 alter table public.audit_log     enable row level security;
 
 -- Grants are explicit on every table, so nothing depends on Supabase's
 -- default privileges. Access rules then narrow each grant down.
-revoke all on public.staff_roles, public.staff_invites, public.media, public.settings, public.audit_log
+revoke all on public.staff_roles, public.staff_invites, public.media, public.site_settings, public.audit_log
   from anon, authenticated;
 
 grant select on public.staff_roles to authenticated;
@@ -225,12 +229,13 @@ create policy "staff manage media" on public.media
   for all to authenticated using (public.is_staff()) with check (public.is_staff());
 -- Members add media for their own avatar and articles (see the members migration).
 
-grant select on public.settings to anon, authenticated;
-grant insert, update, delete on public.settings to authenticated;
-create policy "public settings are public" on public.settings
-  for select to anon, authenticated using (is_public or public.is_staff());
-create policy "admins manage settings" on public.settings
-  for all to authenticated using (public.is_admin()) with check (public.is_admin());
+-- Nothing in site_settings is secret: every value appears on the site.
+grant select on public.site_settings to anon, authenticated;
+grant update on public.site_settings to authenticated;
+create policy "settings are public" on public.site_settings
+  for select to anon, authenticated using (true);
+create policy "admins manage settings" on public.site_settings
+  for update to authenticated using (public.is_admin()) with check (public.is_admin());
 
 grant select on public.audit_log to authenticated;
 create policy "admins read the audit log" on public.audit_log

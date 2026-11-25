@@ -105,11 +105,13 @@ values ('secret-social', 'Not announced yet', now() + interval '60 days', now() 
 
 insert into public.games (slug, title, kind, status) values ('test-quiz', 'Test quiz', 'quiz', 'published');
 insert into public.game_questions (game_id, prompt) select id, 'Pick one' from public.games where slug = 'test-quiz';
-insert into public.game_options (question_id, label, weights)
-select id, 'This one', '{"correct": true}' from public.game_questions;
+insert into public.game_options (question_id, label, is_correct)
+select id, 'This one', true from public.game_questions;
+insert into public.game_option_scores (option_id, personality_key, points)
+select id, 'red', 2 from public.game_options;
 
 insert into public.event_rsvps (event_id, name, phone) select id, 'Someone', '0711111111' from public.events where slug = 'social-4';
-insert into public.game_attempts (game_id, email, answers) select id, 'player@example.test', '[]' from public.games where slug = 'test-quiz';
+insert into public.game_attempts (game_id, email) select id, 'player@example.test' from public.games where slug = 'test-quiz';
 
 -- A season covering today, with the automatic categories switched on.
 insert into public.seasons (name, starts_on, ends_on) values ('Test season', current_date - 30, current_date + 30);
@@ -127,11 +129,16 @@ select test.ok(test.count('select * from public.past_events') = 1, 'Social 3.0 i
 select test.ok((select slug from public.current_reads) = 'surrounded-by-idiots', 'current read is Surrounded by Idiots');
 select test.ok(test.count('select * from public.shelf') = 6, 'the shelf has six books');
 select test.ok(test.count('select * from public.partners') = 3, 'three partners are public');
-select test.ok((select value from public.settings where key = 'whatsapp_rsvp') = '"254716681166"', 'public settings are readable');
+select test.ok((select whatsapp_rsvp from public.site_settings) = '254716681166', 'public settings are readable');
+select test.ok((select authors from public.book_cards where slug = 'blue-ocean-strategy') = 'W. Chan Kim & Renée Mauborgne',
+               'co-authors are joined in order');
+select test.ok(test.count($$select * from public.book_purchase_links$$) = 6, 'six books have a buy link');
+select test.ok((select venue_name from public.next_event) = 'Golden Tulip Westlands', 'the next Social shows its venue');
+select test.ok((select count(*) from public.merch_variants) = 0, 'visitors see no variants of draft merch');
 
 select test.refused($$insert into public.events (slug, heading, starts_at, ends_at) values ('x', 'x', now(), now() + interval '1 hour')$$,
                     'visitors cannot create events');
-select test.refused($$update public.settings set value = '"0"' where key = 'join_url'$$, 'visitors cannot change settings');
+select test.refused($$update public.site_settings set join_url = 'https://evil.test'$$, 'visitors cannot change settings');
 select test.refused($$select email from public.profiles$$, 'visitors cannot read member emails');
 select test.refused($$select pending_changes from public.profiles$$, 'visitors cannot read pending profile edits');
 select test.refused($$select * from public.audit_log$$, 'visitors cannot read the audit log');
@@ -139,7 +146,8 @@ select test.refused($$select * from public.staff_invites$$, 'visitors cannot rea
 select test.refused($$select * from public.event_rsvps$$, 'visitors cannot read RSVPs');
 select test.refused($$select * from public.game_attempts$$, 'visitors cannot read game attempts');
 select test.refused($$select * from public.merch_orders$$, 'visitors cannot read merch orders');
-select test.refused($$select weights from public.game_options$$, 'visitors cannot read answer weights');
+select test.refused($$select is_correct from public.game_options$$, 'visitors cannot read the correct answers');
+select test.refused('select * from public.game_option_scores', 'visitors cannot read the bird test scoring');
 select test.refused($$select note from public.score_entries$$, 'visitors cannot read notes on points');
 select test.refused($$select public.profile_private(id) from public.profiles$$, 'visitors cannot call profile_private');
 select test.refused($$insert into public.event_rsvps (event_id, name) select id, 'x' from public.events limit 1$$,
@@ -218,12 +226,14 @@ select test.refused($$insert into storage.objects (bucket_id, name) values ('ava
 select test.refused($$insert into storage.objects (bucket_id, name) values ('covers', '00000000-0000-0000-0000-0000000000a1/cover.jpg')$$,
                     'a member cannot upload book covers');
 insert into storage.objects (bucket_id, name) values ('avatars', '00000000-0000-0000-0000-0000000000a1/photo.jpg');
-select test.refused($$insert into public.settings (key, value) values ('x', '1')$$, 'a member cannot add settings');
+update public.site_settings set join_url = 'https://member.test';
+select test.ok(test.count('select * from public.game_option_scores') = 0, 'members cannot read the bird test scoring');
 select test.refused($$insert into public.score_entries (season_id, category_id, profile_id, points)
                       select s.id, c.id, private.current_profile_id(), 1000 from public.seasons s, public.score_categories c limit 1$$,
                     'a member cannot award themselves points');
 reset role;
 select test.ok(test.count($$select * from storage.objects where bucket_id = 'avatars'$$) = 1, 'a member can upload to their own folder');
+select test.ok((select join_url from public.site_settings) = 'https://forms.gle/QkmrkPRywfeGpRkq7', 'a member cannot change settings');
 
 select test.as_user('00000000-0000-0000-0000-0000000000b1');
 select test.ok(test.count($$select * from public.articles where slug = 'my-first-article'$$) = 0,
@@ -240,12 +250,13 @@ select public.approve_profile_changes(id) from public.profiles where slug = 'ami
 update public.articles set status = 'published' where slug = 'my-first-article';
 update public.articles set status = 'published', title = 'My first article, again' where slug = 'my-first-article';
 update public.event_rsvps set attended = true, profile_id = (select id from public.profiles where slug = 'amina');
-select test.refused($$insert into public.settings (key, value) values ('editor_try', '1')$$, 'editors cannot change settings');
+update public.site_settings set join_url = 'https://editor.test';
 select test.refused($$insert into public.staff_roles (user_id, role) values ('00000000-0000-0000-0000-0000000000c1', 'admin')$$,
                     'editors cannot make staff');
 select test.ok(test.count('select * from public.audit_log') = 0, 'editors cannot read the audit log');
 reset role;
 
+select test.ok((select join_url from public.site_settings) = 'https://forms.gle/QkmrkPRywfeGpRkq7', 'editors cannot change settings');
 select test.ok((select full_name from public.profiles where slug = 'amina') = 'Amina New Name', 'staff approval applies the parked edit');
 select test.ok((select pending_changes from public.profiles where slug = 'amina') is null, 'approval clears pending_changes');
 select test.ok((select reviewed_by from public.articles where slug = 'my-first-article') = '00000000-0000-0000-0000-00000000000e',
@@ -255,13 +266,55 @@ select test.ok((select count(*) from public.score_entries where source_ref like 
 select test.ok((select count(*) from public.score_entries where source_ref like 'event:%') = 1, 'attending a Social awards points');
 
 select test.as_user('00000000-0000-0000-0000-00000000000a');
-insert into public.settings (key, value) values ('mpesa_till', '"000000"');
+update public.site_settings set mpesa_till = '123456';
 select test.ok(test.count('select * from public.audit_log') > 0, 'admins read the audit log');
 insert into public.score_entries (season_id, category_id, flock_id, points, awarded_by)
 select s.id, c.id, f.id, 10, auth.uid()
   from public.seasons s, public.score_categories c, public.flocks f
  where c.slug = 'challenge-done' and f.slug = 'kiambu-road';
 reset role;
+select test.ok((select mpesa_till from public.site_settings) = '123456', 'admins change settings');
+select test.refused($$update public.site_settings set merch_deposit_pct = 150$$, 'settings are checked: deposit over 100% is refused');
+select test.refused($$insert into public.site_settings (join_url, whatsapp_rsvp, whatsapp_partners, whatsapp_merch)
+                      values ('https://x.test', '254700000000', '254700000000', '254700000000')$$,
+                    'there is only ever one settings row');
+
+-- Merch structure
+select test.ok((select count(*) from public.merch_variants v join public.merch_products p on p.id = v.product_id
+                 where p.slug = 'know-your-bird') = 90, 'Know Your Bird has 6 birds x 3 colours x 5 sizes = 90 variants');
+select test.ok((select public.merch_generate_variants(id) from public.merch_products where slug = 'shelf-care') = 0,
+               'generating variants again adds none');
+select test.ok((select label from public.merch_variant_cards c join public.merch_products p on p.id = c.product_id
+                 where p.slug = 'book-tote' order by label limit 1) = 'cream', 'variant labels read from the options');
+select test.refused($$insert into public.merch_variant_values (variant_id, product_id, option_id, option_value_id)
+                      select v.id, v.product_id, o.id, ov.id
+                        from public.merch_variants v
+                        join public.merch_products p on p.id = v.product_id and p.slug = 'book-tote'
+                        join public.merch_options o on o.product_id <> v.product_id
+                        join public.merch_option_values ov on ov.option_id = o.id
+                       limit 1$$,
+                    'a variant cannot take a value from another product''s option');
+insert into public.merch_orders (name, phone, deposit_pct) values ('Buyer', '0722222222', 50);
+insert into public.merch_order_items (order_id, variant_id, qty, unit_price_kes)
+select (select id from public.merch_orders limit 1), c.id, 2, c.price_kes
+  from public.merch_variant_cards c join public.merch_products p on p.id = c.product_id
+ where p.slug = 'book-tote' and c.label = 'cream';
+select test.ok((select total_kes from public.merch_order_totals) = 2000, 'order total is worked out from the lines');
+select test.ok((select deposit_kes from public.merch_order_totals) = 1000, 'deposit is worked out from the order''s percentage');
+
+-- Bird test structure
+select test.refused($$insert into public.game_attempt_answers (attempt_id, question_id, option_id)
+                      select a.id, q.id, gen_random_uuid() from public.game_attempts a, public.game_questions q limit 1$$,
+                    'an answer must be an option of its question');
+insert into public.game_attempt_answers (attempt_id, question_id, option_id)
+select a.id, o.question_id, o.id from public.game_attempts a, public.game_options o;
+select test.ok((select points from public.personality_attempt_scores where personality_key = 'red') = 2,
+               'bird test totals are worked out from the answers');
+
+-- Testimonials are attributed once
+select test.refused($$insert into public.testimonials (quote, profile_id, author_name)
+                      select 'x', id, 'Also a name' from public.profiles limit 1$$,
+                    'a testimonial cannot have both a profile and a name');
 
 select test.refused($$update public.score_entries set points = 999$$, 'points cannot be edited, even by the owner');
 select test.refused($$delete from public.score_entries$$, 'points cannot be deleted, even by the owner');

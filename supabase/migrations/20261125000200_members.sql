@@ -58,10 +58,21 @@ create table public.profiles (
 );
 create index profiles_status_sort_idx on public.profiles (status, sort_order);
 
+-- Kinds of contact link. A lookup table, so adding one (say TikTok) is a
+-- row, not a migration. default_visibility is what a new link starts as.
+create table public.link_kinds (
+  key                text primary key check (key ~ '^[a-z0-9_]+$'),
+  label              text not null,
+  default_visibility text not null check (default_visibility in ('public', 'members')),
+  sort_order         int not null default 0,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+
 create table public.profile_links (
   id         uuid primary key default gen_random_uuid(),
   profile_id uuid not null references public.profiles (id) on delete cascade,
-  kind       text not null check (kind in ('linkedin', 'instagram', 'x', 'website', 'email', 'phone', 'whatsapp')),
+  kind       text not null references public.link_kinds (key) on update cascade,
   value      text not null check (length(trim(value)) > 0),
   visibility text not null check (visibility in ('public', 'members')),
   sort_order int not null default 0,
@@ -70,7 +81,8 @@ create table public.profile_links (
 );
 create index profile_links_profile_idx on public.profile_links (profile_id);
 
--- Phone, email and WhatsApp default to members-only.
+-- A new link starts with its kind's default visibility (members-only for
+-- phone, email and WhatsApp).
 create or replace function public.profile_links_default_visibility()
 returns trigger
 language plpgsql
@@ -78,7 +90,7 @@ set search_path = ''
 as $$
 begin
   if new.visibility is null then
-    new.visibility := case when new.kind in ('email', 'phone', 'whatsapp') then 'members' else 'public' end;
+    select default_visibility into new.visibility from public.link_kinds where key = new.kind;
   end if;
   return new;
 end;
@@ -255,6 +267,7 @@ grant execute on function public.approve_profile_changes(uuid) to authenticated;
 select public.track_table('public.personality_types');
 select public.track_table('public.flocks');
 select public.track_table('public.profiles');
+select public.track_table('public.link_kinds');
 select public.track_table('public.profile_links');
 select public.track_table('public.flock_memberships');
 
@@ -265,11 +278,19 @@ select public.track_table('public.flock_memberships');
 alter table public.personality_types enable row level security;
 alter table public.flocks            enable row level security;
 alter table public.profiles          enable row level security;
+alter table public.link_kinds        enable row level security;
 alter table public.profile_links     enable row level security;
 alter table public.flock_memberships enable row level security;
 
-revoke all on public.personality_types, public.flocks, public.profiles, public.profile_links, public.flock_memberships
+revoke all on public.personality_types, public.flocks, public.link_kinds, public.profiles, public.profile_links, public.flock_memberships
   from anon, authenticated;
+
+grant select on public.link_kinds to anon, authenticated;
+grant insert, update, delete on public.link_kinds to authenticated;
+create policy "link kinds are public" on public.link_kinds
+  for select to anon, authenticated using (true);
+create policy "staff manage link kinds" on public.link_kinds
+  for all to authenticated using (public.is_staff()) with check (public.is_staff());
 
 -- Personality types and flocks: public read, staff write.
 grant select on public.personality_types, public.flocks to anon, authenticated;

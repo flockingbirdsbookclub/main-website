@@ -22,6 +22,7 @@ alter function public.current_profile_id() set schema private;
 alter function public.is_valid_slug(text) set schema private;
 alter function public.award_automatic(text, uuid, text) set schema private;
 alter function public.track_table(regclass, boolean) set schema private;
+alter function public.merch_product_is_public(uuid) set schema private;
 
 -- Function bodies are stored as text, so any function that calls a moved
 -- helper by its old public. name is rewritten to call private. instead.
@@ -34,10 +35,10 @@ begin
     select p.oid
       from pg_proc p join pg_namespace n on n.oid = p.pronamespace
      where n.nspname in ('public', 'private')
-       and p.prosrc ~ 'public\.(is_staff|is_admin|is_member|current_profile_id|is_valid_slug|award_automatic|track_table)\('
+       and p.prosrc ~ 'public\.(is_staff|is_admin|is_member|current_profile_id|is_valid_slug|award_automatic|track_table|merch_product_is_public)\('
   loop
     def := pg_get_functiondef(f.oid);
-    def := regexp_replace(def, 'public\.(is_staff|is_admin|is_member|current_profile_id|is_valid_slug|award_automatic|track_table)\(', 'private.\1(', 'g');
+    def := regexp_replace(def, 'public\.(is_staff|is_admin|is_member|current_profile_id|is_valid_slug|award_automatic|track_table|merch_product_is_public)\(', 'private.\1(', 'g');
     execute def;
   end loop;
 end
@@ -73,7 +74,7 @@ grant  execute on function public.merch_product_progress(uuid) to anon, authenti
 -- They stay unreachable over HTTP because `private` is not an exposed schema.
 revoke execute on all functions in schema private from public;
 grant execute on function private.is_staff(), private.is_admin(), private.is_member(),
-  private.current_profile_id(), private.is_valid_slug(text)
+  private.current_profile_id(), private.is_valid_slug(text), private.merch_product_is_public(uuid)
   to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
